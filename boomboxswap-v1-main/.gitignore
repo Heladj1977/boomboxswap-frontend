@@ -1,0 +1,64 @@
+# =============================
+# Fichiers et dossiers à ignorer pour BOOMBOXSWAP
+# =============================
+
+# Fichiers Python compilés
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Fichiers temporaires et logs
+*.tmp
+*.log
+*.bak
+
+# Fichiers du système
+.DS_Store
+Thumbs.db
+
+# Environnements virtuels
+env/
+venv/
+.venv/
+envs/
+
+# Conda
+conda-envs/
+
+# Fichiers de test temporaires ou générés
+CARD3_*.md
+test_card3_*.py
+test_workflow*.py
+*_CORRECTION_*.md
+SURVEILLANCE_GIT_DESACTIVEE.md
+
+# Fichiers de build ou de cache frontend (si applicable)
+node_modules/
+dist/
+build/
+
+# Fichiers de configuration locaux
+.env
+.env.local
+.env.*.local
+
+# Fichiers de swap ou de sauvegarde de l'OS
+*.swp
+*.swo
+
+# Autres fichiers générés ou inutiles
+*.exe
+*.dll
+*.so
+
+# Fichiers spécifiques au projet
+# Fichiers FastAPI
+openapi_dump.json
+*.md (sauf ceux listés ci-dessous)
+!README.md
+!CAHIER_DES_CHARGES.md
+!ROADMAP.md
+!TABLEAU_DE_BORD.md 

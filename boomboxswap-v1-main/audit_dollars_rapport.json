@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-07-31T08:20:58.377277",
+  "audit_type": "forensique_dollars_fake",
+  "version": "1.0",
+  "findings": {
+    "setAllCardsToZero_called": false,
+    "api_calls_detected": [],
+    "storage_values": [],
+    "dom_modifications": [],
+    "suspicious_values": []
+  },
+  "recommendations": [
+    "Surveiller setAllCardsToZero() au démarrage",
+    "Intercepter tous les appels API",
+    "Vérifier localStorage/sessionStorage",
+    "Observer modifications DOM Card 3",
+    "Identifier valeurs hardcodées"
+  ]
+}

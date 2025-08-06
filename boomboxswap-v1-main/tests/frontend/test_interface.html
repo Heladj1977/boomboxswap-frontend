@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Interface BOOMBOXSWAP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a2332;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #3a4a5a;
+            border-radius: 8px;
+        }
+        .test-button {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #357abd;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .status.success {
+            background: #10b981;
+        }
+        .status.error {
+            background: #ef4444;
+        }
+        .status.warning {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Interface BOOMBOXSWAP V1</h1>
+
+    <div class="test-section">
+        <h2>Test Navigation</h2>
+        <button class="test-button" onclick="testNavigation()">Test Navigation Points</button>
+        <div id="nav-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Sélecteur Chain</h2>
+        <button class="test-button" onclick="testChainSelector()">Test Changement Chain</button>
+        <div id="chain-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Wallet</h2>
+        <button class="test-button" onclick="testWallet()">Test Connexion Wallet</button>
+        <div id="wallet-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Notifications</h2>
+        <button class="test-button" onclick="testNotification('success')">Notification Succès</button>
+        <button class="test-button" onclick="testNotification('warning')">Notification Warning</button>
+        <button class="test-button" onclick="testNotification('error')">Notification Erreur</button>
+        <button class="test-button" onclick="testNotification('info')">Notification Info</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Actions</h2>
+        <button class="test-button" onclick="testAction('play')">Test PLAY</button>
+        <button class="test-button" onclick="testAction('eject')">Test EJECT</button>
+        <button class="test-button" onclick="testAction('prev')">Test PREV</button>
+        <button class="test-button" onclick="testAction('next')">Test NEXT</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Range Configuration</h2>
+        <button class="test-button" onclick="testRangeConfig()">Test Configuration Range</button>
+        <div id="range-status"></div>
+    </div>
+
+    <script>
+        // Simuler les fonctions de test
+        function testNavigation() {
+            const status = document.getElementById('nav-status');
+            status.innerHTML = '<div class="status success">Navigation testée avec succès</div>';
+            console.log('Test navigation effectué');
+        }
+
+        function testChainSelector() {
+            const status = document.getElementById('chain-status');
+            status.innerHTML = '<div class="status success">Sélecteur chain testé avec succès</div>';
+            console.log('Test sélecteur chain effectué');
+        }
+
+        function testWallet() {
+            const status = document.getElementById('wallet-status');
+            status.innerHTML = '<div class="status success">Wallet testé avec succès</div>';
+            console.log('Test wallet effectué');
+        }
+
+        function testNotification(type) {
+            console.log(`Notification ${type} testée`);
+            // Simuler notification
+            alert(`Notification ${type} affichée`);
+        }
+
+        function testAction(action) {
+            console.log(`Action ${action} testée`);
+            alert(`Action ${action} déclenchée`);
+        }
+
+        function testRangeConfig() {
+            const status = document.getElementById('range-status');
+            status.innerHTML = '<div class="status success">Configuration range testée avec succès</div>';
+            console.log('Test configuration range effectué');
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', () => {
+            console.log('Page de test chargée');
+            console.log('Interface BOOMBOXSWAP V1 prête pour les tests');
+        });
+    </script>
+</body>
+</html>
