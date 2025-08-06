@@ -1,0 +1,17 @@
+{
+  "name": "boomboxswap-v1",
+  "version": "1.0.0",
+  "description": "Interface gaming DeFi PancakeSwap V3",
+  "scripts": {
+    "test:visual": "backstop test",
+    "test:visual:reference": "backstop test --updateReference",
+    "lint:css": "stylelint frontend/assets/css/*.css",
+    "refactoring:test": "scripts/test-refactoring-step.bat",
+    "rollback:emergency": "scripts/rollback-emergency.bat"
+  },
+  "devDependencies": {
+    "backstopjs": "^6.2.0",
+    "playwright": "^1.40.0",
+    "stylelint": "^15.11.0"
+  }
+} 
