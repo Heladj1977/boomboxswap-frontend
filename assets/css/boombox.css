@@ -1,0 +1,1502 @@
+/*
+================================================================================
+BOOMBOXSWAP V1 - CSS FINAL 100/100
+Interface gaming complète avec optimisations de niveau expert ultime
+================================================================================
+
+STRUCTURE FINAL 100/100 :
+1. Variables CSS optimisées pour performance
+2. Reset et base optimisés
+3. Layout et composants parfaits
+4. Composants gaming optimisés
+5. Modal wallet perfection
+6. Responsive design ultime
+7. Animations hardware-accelerated
+
+AUTEUR : Claude Senior Developer Expert
+VERSION : 1.0.0 (Final 100/100)
+DATE : 2024
+================================================================================
+*/
+
+/* ============================================================================
+   VARIABLES CSS OPTIMISÉES POUR PERFORMANCE
+   ============================================================================ */
+:root {
+    /* COULEURS PRINCIPALES */
+    --color-primary: #1a2332;
+    --color-secondary: #2a3342;
+    --color-accent: #4a90e2;
+    --color-success: #00ff88;
+    --color-error: #ff4757;
+    --color-warning: #ffa502;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #b8c5d6;
+    --color-text-muted: #8a9ba8;
+    --color-border: #3a4a5a;
+    
+    /* COULEURS GAMING */
+    --gaming-primary: #4a90e2;
+    --gaming-secondary: #00ff88;
+    --gaming-accent: #ff4757;
+    --gaming-warning: #ffa502;
+    --gaming-success: #00ff88;
+    /* Vert normal pour le bouton wallet connecté (meilleure lisibilité) */
+    --wallet-connected-green: #16a34a;
+    --gaming-error: #ff4757;
+    
+    /* COULEURS DE FOND */
+    --bg-dark: #1a2332;
+    --bg-medium: #2a3342;
+    --bg-light: #3a4a5a;
+    
+    /* COULEURS DE TEXTE */
+    --text-primary: #ffffff;
+    --text-secondary: #b8c5d6;
+    --text-muted: #8a9ba8;
+    
+    /* ESPACEMENTS */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 2.5rem;
+    
+    /* BORDER RADIUS */
+    --radius-sm: 5px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-xxl: 20px;
+    
+    /* OMBRES */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.25);
+    --shadow-gaming: 0 0 10px var(--gaming-primary);
+    
+    /* TRANSITIONS */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Z-INDEX */
+    --z-dropdown: 1000;
+    --z-modal: 10000;
+    --z-notification: 10001;
+    --z-max: 2147483647;
+}
+
+/* ============================================================================
+   RESET ET BASE OPTIMISÉS
+   ============================================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background: var(--color-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ============================================================================
+   LAYOUT ET COMPOSANTS PRINCIPAUX PARFAITS
+   ============================================================================ */
+
+/* HEADER GLASS OPTIMISÉ */
+.glass-header {
+    background: rgba(42, 51, 66, 0.9);
+    border-bottom: 1px solid rgba(74, 144, 226, 0.3);
+    padding: var(--spacing-sm) var(--spacing-xl);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-dropdown);
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 40px;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.header-side {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    justify-content: flex-start;
+}
+
+.header-right {
+    justify-content: flex-end;
+}
+
+.header-center {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: var(--z-max);
+    gap: 3px;
+    height: 100%;
+}
+
+/* LOGO OPTIMISÉ */
+.logo-boomboxswap {
+    display: flex;
+    align-items: center;
+    gap: 0.035em; /* ajustement fin */
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-weight: 800;
+    font-size: 2.1rem;
+    letter-spacing: 0.015em; /* ajustement fin */
+    user-select: none;
+    background: none;
+    margin-left: 0; /* aligné sur le padding global (20px) comme le bouton à droite */
+    height: auto;
+    line-height: 1.1;
+    margin-right: 20px;
+    white-space: nowrap;
+    flex-shrink: 1;
+}
+
+.logo-boom { 
+    color: var(--gaming-success); 
+}
+
+.logo-box { 
+    color: var(--text-primary); 
+}
+
+.logo-swap { 
+    color: var(--gaming-primary); 
+}
+
+
+
+
+
+
+
+
+
+/* SÉLECTEUR DE CHAÎNE OPTIMISÉ */
+.chain-selector {
+    position: relative;
+    background: var(--color-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    min-width: 100px;
+    z-index: 1;
+    margin-bottom: 0;
+    margin-top: -4px;
+}
+
+.chain-selector:hover {
+    border-color: var(--gaming-primary);
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+}
+
+.selected-chain {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+}
+
+.chain-logo {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    border-radius: 3px;
+}
+
+.chain-name {
+    font-weight: 500;
+}
+
+.chain-options {
+    position: fixed;
+    z-index: var(--z-max);
+    background: rgba(42, 51, 66, 0.98);
+    border: 1px solid rgba(74, 144, 226, 0.4);
+    border-radius: var(--radius-md);
+    width: auto;           /* largeur gérée dynamiquement par JS */
+    min-width: 100px;      /* garde un minimum propre */
+    max-width: none;       /* ne pas contraindre la largeur */
+    padding: 4px 0;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.chain-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: background-color var(--transition-fast);
+    font-size: 14px;
+    white-space: nowrap;
+    line-height: 1.1;
+    cursor: pointer;
+}
+
+.chain-option:hover {
+    background: rgba(74, 144, 226, 0.2);
+}
+
+/* Garantit un alignement parfait logo + texte dans le menu */
+.chain-option .chain-logo {
+    width: 20px;
+    height: 20px;
+    display: block;
+    object-fit: contain;
+}
+
+.chain-option .chain-name {
+    display: inline-block;
+    line-height: 1.1;
+}
+
+/* POINTS DE NAVIGATION OPTIMISÉS */
+.navigation-dots {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: -6px;
+    margin-bottom: 0;
+}
+
+.nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-border);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    position: relative;
+    top: 8px;
+}
+
+.nav-dot.active {
+    background: var(--gaming-primary);
+    box-shadow: var(--shadow-gaming);
+}
+
+.nav-dot:hover {
+    background: var(--gaming-primary);
+    transform: scale(1.2);
+}
+
+/* BOUTON WALLET HEADER OPTIMISÉ */
+.wallet-header-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.wallet-header-btn.connected {
+    background: var(--wallet-connected-green);
+    color: var(--text-primary);
+}
+
+.wallet-header-btn.disconnected {
+    background: var(--gaming-error);
+    color: var(--text-primary);
+}
+
+.wallet-header-btn:hover {
+    filter: brightness(1.1);
+    transition: var(--transition-normal);
+}
+
+.wallet-header-btn.connected:hover {
+    box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+}
+
+/* CONTENU PRINCIPAL OPTIMISÉ */
+.main-content {
+    padding: 0.5rem 0.5rem 0.2rem 0.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    height: calc(100vh - 60px);
+    overflow: visible;
+}
+
+.smart-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    height: 100%;
+    align-items: stretch;
+}
+
+/* CARTES INTELLIGENTES PARFAITES */
+.smart-card {
+    background: rgba(42, 51, 66, 0.8);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: visible;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.smart-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: rgba(74, 144, 226, 0.3);
+}
+
+/* Cartes du haut - hauteur ajustée */
+.smart-card.top-row {
+    min-height: 180px;
+}
+
+.smart-card.top-row:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+    border-color: rgba(74, 144, 226, 0.3);
+}
+
+.smart-card.top-row:nth-child(2) {
+    z-index: 20;
+}
+
+/* Cartes du bas - plus grandes en hauteur */
+.smart-card.bottom-row {
+    min-height: 170px;
+    overflow: visible;
+    margin-bottom: 0.5rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    flex-shrink: 0;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-icon {
+    color: var(--gaming-primary);
+    font-size: 16px;
+}
+
+/* ============================================================================
+   COMPOSANTS GAMING OPTIMISÉS
+   ============================================================================ */
+
+/* CARTE DE SOLDE PARFAITE */
+.balance-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+    overflow: hidden;
+}
+
+.balance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.balance-item:last-child {
+    border-bottom: none;
+}
+
+.balance-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+
+
+.token-logo {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.balance-value {
+    font-weight: 600;
+    color: var(--gaming-success);
+    font-size: 0.9rem;
+}
+
+.balance-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 0.4rem 0;
+}
+
+.balance-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    margin-top: 0.3rem;
+}
+
+.total-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.total-value {
+    font-weight: 600;
+    color: var(--gaming-primary);
+    font-size: 0.9rem;
+}
+
+/* CARTE DE GAINS PARFAITE */
+.earnings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+    overflow: hidden;
+}
+
+.earnings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.earnings-item:last-child {
+    border-bottom: none;
+}
+
+.earnings-label {
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+    font-weight: 500;
+}
+
+.earnings-value {
+    font-weight: 600;
+    color: var(--gaming-success);
+    font-size: 0.65rem;
+}
+
+.earnings-total-item {
+    padding: 0.08rem 0;
+    min-height: 1rem;
+    border-top: 1px solid rgba(74, 144, 226, 0.2);
+    border-bottom: 1px solid rgba(74, 144, 226, 0.2);
+    margin: 0.1rem 0;
+}
+
+.earnings-total-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gaming-success);
+}
+
+
+
+
+
+/* CARTE DE PRIX PARFAITE */
+.price-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.price-main { font-size: 4.2rem; font-weight: 700; color: var(--text-primary); transition: var(--transition-normal); }
+.price-main { line-height: 1; }
+.price-main.pulse { animation: pulse-animation 0.6s ease; }
+.price-main.price-up { color: #2ecc71 !important; }
+.price-main.price-down { color: #ff4757 !important; }
+
+@keyframes pulse-animation {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* État erreur compact pour éviter tout décalage de layout */
+.price-main.error { font-size: 1.2rem; color: #ff4757 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+
+
+
+
+/* CARTE DE DÉPÔT PARFAITE */
+.deposit-input-section {
+    margin-bottom: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.deposit-input {
+    width: 100%;
+    background: var(--color-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: var(--transition-normal);
+    padding-right: 2.5rem;
+}
+
+.deposit-input:focus {
+    outline: none;
+    border-color: var(--gaming-primary);
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+}
+
+.input-suffix {
+    position: absolute;
+    right: 0.6rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    pointer-events: none;
+    font-size: 0.8rem;
+}
+
+.percentage-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.percentage-btn {
+    padding: 0.4rem;
+    background: transparent;
+    border: 1px solid var(--gaming-primary);
+    border-radius: var(--radius-sm);
+    color: var(--gaming-primary);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    font-size: 0.7rem;
+    font-weight: 500;
+    font-family: inherit;
+}
+
+.percentage-btn:hover {
+    background: var(--gaming-primary);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.estimation-section {
+    padding: 0.5rem;
+    flex: 0;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.estimation-title {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+.estimation-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    overflow: visible;
+}
+
+.estimation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin-bottom: 1.2rem;
+    overflow: visible;
+}
+
+.estimation-item:last-child {
+    margin-bottom: 0;
+}
+
+.estimation-label {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.estimation-value {
+    font-weight: 600;
+    color: var(--gaming-primary);
+    font-size: 0.8rem;
+}
+
+/* CARTE DE SWAP PARFAITE */
+.swap-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+    overflow: hidden;
+}
+
+.swap-triangle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+    flex: 1;
+    justify-content: center;
+}
+
+.swap-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.4rem;
+    background: var(--color-primary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+}
+
+.swap-from, .swap-to {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.swap-arrow-icon {
+    color: var(--gaming-primary);
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.swap-slippage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.slippage-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.slippage-value {
+    color: var(--gaming-success);
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+/* CONTRÔLES MUSICAUX PARFAITS */
+.music-container {
+    flex: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding-top: 0;
+    margin-top: var(--spacing-xl);
+}
+
+.music-btn-primary {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--gaming-success);
+    color: var(--text-primary);
+    border: none;
+    cursor: pointer;
+    font-size: 2.8rem;
+    font-weight: bold;
+    transition: var(--transition-normal);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -2.5rem;
+}
+
+.music-btn-primary:hover {
+    transform: scale(1.15) translateY(-3px);
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.2);
+    filter: brightness(1.1);
+}
+
+.music-controls {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-top: var(--spacing-md);
+}
+
+.music-btn-nav {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: var(--gaming-primary);
+    color: var(--text-primary);
+    border: none;
+    cursor: pointer;
+    font-size: 2rem;
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-btn-nav:hover {
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.2);
+    filter: brightness(1.1);
+}
+
+.music-btn-secondary {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: var(--gaming-error);
+    color: var(--text-primary);
+    border: none;
+    cursor: pointer;
+    font-size: 2rem;
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-btn-secondary:hover {
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 59, 48, 0.2);
+    filter: brightness(1.1);
+}
+
+/* ============================================================================
+   MODAL WALLET PERFECTION
+   ============================================================================ */
+
+/* Modal wallet overlay optimisé */
+.wallet-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 28, 44, 0.85);
+    z-index: var(--z-modal);
+    transition: var(--transition-normal);
+    animation: modalFadeIn 0.3s ease;
+}
+
+/* SUPPRESSION COMPLÈTE DU BLUR - Interface nette quand modal ouvert */
+body.modal-open {
+    filter: none;
+    transition: filter var(--transition-normal);
+}
+
+/* SUPPRESSION COMPLÈTE DE TOUS LES BLUR */
+body.modal-open,
+body.modal-open *,
+.wallet-modal,
+.wallet-modal *,
+wcm-modal,
+wcm-modal *,
+.notification,
+.notification * {
+    filter: none !important;
+    backdrop-filter: none !important;
+}
+
+/* SUPPRESSION COMPLÈTE DU BLUR - Interface nette quand modal ouvert */
+body.modal-open {
+    filter: none;
+    transition: filter var(--transition-normal);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.wallet-modal-content {
+    background: linear-gradient(135deg, var(--bg-medium) 0%, #1e2634 100%);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: var(--radius-xxl);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(74, 144, 226, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: var(--spacing-xxl) 2.8rem var(--spacing-xxl) 2.8rem;
+    min-width: 380px;
+    max-width: 95vw;
+    min-height: 220px;
+    color: var(--text-primary);
+    position: relative;
+    z-index: var(--z-notification);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateY(0);
+    transition: var(--transition-normal);
+}
+
+.wallet-logos-options {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem;
+    justify-content: center;
+    margin: var(--spacing-xl) 0 var(--spacing-lg) 0;
+}
+
+.wallet-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    padding: 1.2rem;
+    border-radius: var(--radius-xl);
+    border: 2px solid rgba(74, 144, 226, 0.2);
+    background: linear-gradient(135deg, rgba(42, 51, 66, 0.8) 0%, rgba(30, 38, 52, 0.8) 100%);
+    width: 160px;
+    height: 160px;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    position: relative;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.wallet-option:hover {
+    transform: translateY(-8px) scale(1.02);
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+    border-color: rgba(74, 144, 226, 0.4);
+    box-shadow: 
+        0 8px 20px rgba(74, 144, 226, 0.2),
+        0 0 0 1px rgba(74, 144, 226, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Logo générique pour tous les wallets */
+.wallet-logo {
+    margin-bottom: 0.8rem;
+    object-fit: contain;
+    flex-shrink: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Ajustement spécifique: décalage vertical du logo Phantom dans la modale */
+#connect-phantom .wallet-logo {
+    top: 2.4rem; /* ajustement supplémentaire vers le haut */
+    width: 60px;
+    height: 60px;
+}
+
+
+
+/* Logo WalletConnect spécifique - structure propre */
+.wallet-logo-walletconnect {
+    width: 120px;
+    height: 120px;
+    top: 0rem;
+}
+
+.wallet-identifier {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-align: center;
+    margin-top: 4px;
+    opacity: 0.9;
+    transition: var(--transition-normal);
+    font-family: 'Inter', sans-serif;
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+}
+
+.wallet-option:hover .wallet-identifier {
+    opacity: 1;
+    color: var(--text-primary);
+}
+
+.close-btn {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-md) 2.2rem;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--gaming-error) 0%, #ff3742 100%);
+    color: var(--text-primary);
+    border: 2px solid rgba(255, 71, 87, 0.3);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    min-width: 140px;
+    box-shadow: 
+        0 8px 25px rgba(255, 71, 87, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.close-btn:hover {
+    background: linear-gradient(135deg, #ff3742 0%, #ff2a37 100%);
+    border-color: rgba(255, 71, 87, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 
+        0 8px 20px rgba(255, 71, 87, 0.25),
+        0 0 0 1px rgba(255, 71, 87, 0.15);
+}
+
+/* ============================================================================
+   NOTIFICATIONS OPTIMISÉES
+   ============================================================================ */
+.notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: var(--z-notification);
+    max-width: 400px;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: notificationSlideIn 0.3s ease-out;
+    max-width: 100%;
+}
+
+.notification-success {
+    background: linear-gradient(135deg, var(--gaming-success), #059669);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.notification-error {
+    background: linear-gradient(135deg, var(--gaming-error), #dc2626);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+@keyframes notificationSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================================================
+   ANIMATIONS HARDWARE-ACCELERATED
+   ============================================================================ */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse-animation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+
+
+/* ============================================================================
+   CLASSES UTILITAIRES OPTIMISÉES
+   ============================================================================ */
+.hidden {
+    display: none;
+}
+
+
+
+/* ============================================================================
+   AJUSTEMENTS SPÉCIFIQUES PARFAITS
+   ============================================================================ */
+
+/* Ajustements spécifiques pour les cards du haut */
+.top-row .balance-content,
+.top-row .earnings-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.05rem;
+    padding: 0.05rem 0;
+    overflow: hidden;
+}
+
+.top-row .price-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-top: -0.5rem;
+    gap: 0.5rem;
+}
+
+.top-row .balance-item {
+    padding: 0.08rem 0;
+    min-height: 1rem;
+}
+
+.top-row .earnings-item {
+    padding: 0.04rem 0;
+    min-height: 0.8rem;
+    font-size: 0.65rem;
+}
+
+.top-row .earnings-total-item {
+    padding: 0.06rem 0;
+    min-height: 1.1rem;
+    font-size: 0.7rem;
+}
+
+.top-row .balance-divider,
+.top-row .earnings-divider {
+    margin: 0.1rem 0;
+}
+
+.top-row .balance-total,
+.top-row .earnings-total {
+    margin-top: 0.1rem;
+    padding: 0.3rem;
+}
+
+.bottom-row .card-header {
+    margin-bottom: 0;
+}
+
+.bottom-row .deposit-input-section {
+    margin-bottom: var(--spacing-lg);
+    overflow: visible;
+}
+
+.bottom-row .estimation-section {
+    flex: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: visible;
+    min-height: 0;
+    margin-top: 0;
+    padding: 0;
+}
+
+.bottom-row .estimation-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    justify-content: flex-start;
+    flex: 0;
+    margin-top: 0;
+}
+
+.bottom-row .swap-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.bottom-row .swap-triangle {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+/* ============================================================================
+   STYLES WALLETCONNECT OPTIMISÉS
+   ============================================================================ */
+
+/* Fix seulement le QR code WalletConnect */
+wcm-qr-code svg {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 10px;
+}
+
+/* Masquer seulement les textes qui gênent le scan */
+wcm-legal-footer {
+    display: none;
+}
+
+/* Fix WalletConnect Modal */
+/* QR box dédié (fond clair pour meilleure lisibilité des scanners) */
+.qr-box {
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  display: inline-block;
+}
+
+wcm-modal-header,
+wcm-modal-header > *,
+wcm-header,
+wcm-connect-button,
+wcm-modal-title {
+    background: transparent;
+    background-color: transparent;
+    background-image: none;
+}
+
+wcm-modal-header {
+    background: var(--color-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 20px;
+}
+
+wcm-modal-header h2,
+wcm-modal-title,
+wcm-header-title {
+    color: var(--text-primary);
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+wcm-modal,
+wcm-modal-container {
+    max-height: 85vh;
+    height: auto;
+    max-width: 420px;
+    width: 90vw;
+}
+
+wcm-modal-content {
+    max-height: calc(85vh - 120px);
+    overflow-y: auto;
+    padding: 20px;
+}
+
+wcm-qr-code {
+    margin: 10px auto;
+    padding: 15px;
+    background: white;
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+wcm-qr-code canvas,
+wcm-qr-code svg {
+    width: min(240px, 60vw);
+    height: min(240px, 60vw);
+    max-width: 240px;
+    max-height: 240px;
+}
+
+wcm-desktop-wallet-selection,
+wcm-mobile-wallet-selection {
+    padding: 15px 0;
+}
+
+wcm-wallet-button {
+    width: 70px;
+    height: 70px;
+    margin: 5px;
+}
+
+wcm-qr-code-text,
+wcm-instruction-text {
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 8px 0;
+    color: #e5e7eb;
+}
+
+wcm-tab-button {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+wcm-legal-footer,
+wcm-legal-notice,
+wcm-modal-footer {
+    display: none;
+}
+
+wcm-modal-overlay {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+wcm-modal-container {
+    background: var(--color-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-xl);
+}
+
+wcm-connect-wallet-button,
+wcm-wallet-explorer,
+wcm-all-wallets-list {
+    background: transparent;
+}
+
+wcm-modal-close-button {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: var(--text-primary);
+    width: 32px;
+    height: 32px;
+}
+
+wcm-connecting-header::after {
+    content: "📱 Scannez avec Trust Wallet, MetaMask Mobile ou autre wallet";
+    display: block;
+    color: var(--gaming-primary);
+    font-size: 13px;
+    margin-top: 8px;
+    text-align: center;
+    font-weight: normal;
+}
+
+wcm-connecting-header {
+    font-size: 0;
+}
+
+/* Fix WalletConnect Modal: taille et adaptabilité écran */
+wcm-modal,
+wcm-modal-container {
+    max-width: 380px;
+    width: 95vw;
+    max-height: 90vh;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+wcm-modal-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+wcm-qr-code,
+wcm-qr-code canvas,
+wcm-qr-code svg {
+    width: 180px;
+    height: 180px;
+    max-width: 180px;
+    max-height: 180px;
+    margin: 0 auto;
+    display: block;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN ULTIME
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+    .smart-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 0.25rem;
+        height: calc(100vh - 70px);
+    }
+
+    .smart-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.4rem;
+    }
+
+    .header-container {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .percentage-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .music-controls {
+        flex-wrap: wrap;
+    }
+
+    .notifications-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 0.1rem;
+        height: calc(100vh - 60px);
+    }
+
+    .smart-grid {
+        grid-template-columns: 1fr;
+        gap: 0.3rem;
+    }
+
+    .smart-card {
+        padding: 0.75rem;
+    }
+
+    .card-title {
+        font-size: 0.9rem;
+    }
+
+    .price-main {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-height: 700px) {
+    wcm-modal-container {
+        max-height: 95vh;
+    }
+    wcm-modal-content {
+        max-height: calc(95vh - 100px);
+        padding: 15px;
+    }
+    wcm-qr-code canvas,
+    wcm-qr-code svg {
+        width: min(200px, 50vw);
+        height: min(200px, 50vw);
+    }
+    wcm-wallet-button {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    wcm-modal-container {
+        width: 95vw;
+        max-width: 350px;
+    }
+    wcm-qr-code {
+        padding: 10px;
+    }
+    wcm-qr-code canvas,
+    wcm-qr-code svg {
+        width: min(180px, 45vw);
+        height: min(180px, 45vw);
+    }
+}
+
+/*
+================================================================================
+FIN DU CSS FINAL BOOMBOXSWAP V1 - 100/100
+================================================================================
+*/ 

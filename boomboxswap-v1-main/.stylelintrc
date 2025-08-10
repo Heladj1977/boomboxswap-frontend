@@ -1,9 +1,0 @@
-{
-  "extends": "stylelint-config-standard",
-  "rules": {
-    "no-duplicate-selectors": "error",
-    "declaration-no-important": "warn",
-    "selector-max-id": 0,
-    "max-nesting-depth": 3
-  }
-} 

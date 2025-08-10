@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOMBOXSWAP - Trading Bot Automatisé</title>
+
+    <!-- CDN Dependencies -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/boombox.css" rel="stylesheet">
+    <!-- Préchargement des logos tokens pour éviter tout délai d'affichage -->
+    <link rel="preload" as="image" href="assets/images/tokens/bnb.svg" />
+    <link rel="preload" as="image" href="assets/images/tokens/ethereum.svg" />
+    <link rel="preload" as="image" href="assets/images/tokens/usdt.svg" />
+    <link rel="preload" as="image" href="assets/images/tokens/cake.svg" />
+    <link rel="preload" as="image" href="assets/images/tokens/sol.svg" />
+
+  </head>
+<body>
+
+    <!-- ========== HEADER ========== -->
+    <header class="glass-header">
+        <div class="header-container">
+            <div class="header-side header-left">
+                <div class="logo-boomboxswap">
+                    <span class="logo-boom">BOOM</span><span class="logo-box">BOX</span><span class="logo-swap">SWAP</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="chain-selector" id="chain-selector">
+                    <div class="selected-chain">
+                        <img src="assets/images/chains/BSC-logo.svg" alt="BSC" class="chain-logo">
+                        <span class="chain-name">BSC</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="navigation-dots">
+                    <div class="nav-dot active"></div>
+                    <div class="nav-dot"></div>
+                </div>
+            </div>
+            <div class="header-side header-right">
+                <div class="metamask-section">
+                    <button id="wallet-btn" class="wallet-header-btn disconnected">
+                        <span id="wallet-btn-text">Connecter Wallet</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="chain-options hidden" id="chain-options">
+        <div class="chain-option" data-value="bsc">
+            <img src="assets/images/chains/BSC-logo.svg" alt="BSC" class="chain-logo">
+            <span class="chain-name">BSC</span>
+        </div>
+        <div class="chain-option" data-value="arbitrum">
+            <img src="assets/images/chains/arbitrum-arb-logo.svg" alt="Arb" class="chain-logo">
+            <span class="chain-name">Arb</span>
+        </div>
+            <div class="chain-option" data-value="solana">
+                <img src="assets/images/chains/solana.svg" alt="Solana" class="chain-logo">
+                <span class="chain-name">Solana</span>
+            </div>
+    </div>
+
+    <div id="positions-alert" class="hidden"></div>
+
+    <!-- ========== DASHBOARD TAB ========== -->
+    <main id="dashboard-content" class="main-content">
+        <div class="smart-grid">
+
+            <!-- Card 1: Portefeuille -->
+            <div class="smart-card top-row" id="card-portfolio">
+                <div class="card-header">
+                    <h3 class="card-title">Portefeuille</h3>
+                    <i class="fas fa-wallet card-icon"></i>
+                </div>
+                <div class="balance-content" id="portfolio-content">
+                    <div id="wallet-balances">
+                        <div class="balance-item">
+                            <span class="balance-label">
+                                <img src="assets/images/tokens/bnb.svg" alt="BNB" class="token-logo" loading="eager" fetchpriority="high" decoding="async">
+                                BNB
+                            </span>
+                            <span class="balance-value" id="balance-bnb"></span>
+                        </div>
+                        <div class="balance-item">
+                            <span class="balance-label">
+                                <img src="assets/images/tokens/usdt.svg" alt="USDT" class="token-logo" loading="eager" fetchpriority="high" decoding="async">
+                                <span class="token-name" id="stable-token-name">USDT</span>
+                            </span>
+                            <span class="balance-value" id="balance-usdt"></span>
+                        </div>
+                        <div class="balance-item">
+                            <span class="balance-label">
+                                <img src="assets/images/tokens/cake.svg" alt="CAKE" class="token-logo" loading="eager" fetchpriority="high" decoding="async">
+                                CAKE
+                            </span>
+                            <span class="balance-value" id="balance-cake"></span>
+                        </div>
+                        <div class="balance-divider"></div>
+                        <div class="balance-total">
+                            <span class="total-label">Valeur Totale</span>
+                            <span class="total-value" id="total-value"></span>
+                        </div>
+                        <!-- Ajout debug : compteur de positions pour updatePositionsCard -->
+                        <!-- SUPPRIMÉ: <div class="positions-debug"><span id="positions-count"></span></div> -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: BNB/USDT -->
+            <div class="smart-card top-row">
+                <div class="card-header">
+                    <h3 class="card-title">BNB/USDT</h3>
+                    <i class="fas fa-chart-area card-icon"></i>
+                </div>
+                <div class="price-content">
+                    <div id="bnbPrice" class="price-main">$0.00</div>
+                </div>
+            </div>
+
+            <!-- Card 3: Rendements -->
+            <div class="smart-card top-row">
+                <div class="card-header">
+                    <h3 class="card-title">Rendements</h3>
+                    <i class="fas fa-coins card-icon"></i>
+                </div>
+                <div class="earnings-content">
+                    <div class="earnings-item">
+                        <span class="earnings-label">Frais Générés</span>
+                        <span class="earnings-value" id="fees-generated">---</span>
+                    </div>
+                    <div class="earnings-item">
+                        <span class="earnings-label">Rewards CAKE</span>
+                        <span class="earnings-value" id="cake-rewards">---</span>
+                    </div>
+                    <div class="earnings-item earnings-total-item">
+                        <span class="earnings-label">Total Gains</span>
+                        <span class="earnings-value earnings-total-value" id="total-gains">---</span>
+                    </div>
+                    <div class="earnings-item">
+                        <span class="earnings-label">Rebalancing</span>
+                        <span class="earnings-value" id="rebalancing-count">---</span>
+                    </div>
+                    <div class="earnings-item">
+                        <span class="earnings-label">Autocompound</span>
+                        <span class="earnings-value" id="autocompound-count">---</span>
+                    </div>
+                    <div class="earnings-item">
+                        <span class="earnings-label">Break Even</span>
+                        <span class="earnings-value" id="break-even">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Dépôt BNB -->
+            <div class="smart-card bottom-row">
+                <div class="card-header">
+                    <h3 class="card-title">Dépôt BNB</h3>
+                    <i class="fas fa-building card-icon"></i>
+                </div>
+                <div class="deposit-input-section">
+                    <div class="input-container">
+                        <input type="text" class="deposit-input" value="0.0000" placeholder="0.0000">
+                        <span class="input-suffix">BNB</span>
+                    </div>
+                    <div class="percentage-grid">
+                        <button class="percentage-btn">25%</button>
+                        <button class="percentage-btn">50%</button>
+                        <button class="percentage-btn">75%</button>
+                        <button class="percentage-btn">MAX</button>
+                    </div>
+                </div>
+                <div class="estimation-section">
+                    <div class="estimation-title">Estimation après création LP:</div>
+                    <div class="estimation-grid">
+                        <div class="estimation-item">
+                            <span class="estimation-label">BNB:</span>
+                            <span class="estimation-value">0.0000</span>
+                        </div>
+                        <div class="estimation-item">
+                            <span class="estimation-label">USDT:</span>
+                            <span class="estimation-value">0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Actions -->
+            <div class="smart-card bottom-row">
+                <div class="card-header">
+                    <h3 class="card-title">Actions</h3>
+                    <i class="fas fa-music card-icon"></i>
+                </div>
+                <div class="music-container">
+                    <button class="music-btn-primary" onclick="toggleMusic()">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="music-controls">
+                        <button class="music-btn-nav" onclick="previousTrack()">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="music-btn-secondary" onclick="stopMusic()">
+                            <i class="fas fa-eject"></i>
+                        </button>
+                        <button class="music-btn-nav" onclick="nextTrack()">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Swap Intégré -->
+            <div class="smart-card bottom-row">
+                <div class="card-header">
+                    <h3 class="card-title">Swap Intégré</h3>
+                    <i class="fas fa-exchange-alt card-icon"></i>
+                </div>
+                <div class="swap-content">
+                    <div class="swap-triangle">
+                        <div class="swap-arrow">
+                            <span class="swap-from">BNB</span>
+                            <i class="fas fa-arrow-right swap-arrow-icon"></i>
+                            <span class="swap-to">USDT</span>
+                        </div>
+                        <div class="swap-arrow">
+                            <span class="swap-from">USDT</span>
+                            <i class="fas fa-arrow-right swap-arrow-icon"></i>
+                            <span class="swap-to">CAKE</span>
+                        </div>
+                        <div class="swap-arrow">
+                            <span class="swap-from">CAKE</span>
+                            <i class="fas fa-arrow-right swap-arrow-icon"></i>
+                            <span class="swap-to">BNB</span>
+                        </div>
+                    </div>
+                    <div class="swap-slippage">
+                        <span class="slippage-label">Slippage:</span>
+                        <span class="slippage-value">0.5%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== CONFIGURATION RANGE TAB ========== -->
+    <main id="range-content" class="main-content hidden">
+        <div class="range-config-container">
+            <div class="range-input-section">
+                <label class="range-label">Écart souhaité (en USD)</label>
+                <div class="range-input-container">
+                    <input type="number" placeholder="15.5" class="range-input" id="custom-range-input">
+                    <span class="range-suffix">$</span>
+                </div>
+            </div>
+
+            <div class="preset-buttons-section">
+                <label class="preset-label">Ou choisir un écart prédéfini:</label>
+                <div class="preset-grid">
+                    <button class="preset-btn" data-value="5">5$</button>
+                    <button class="preset-btn" data-value="10">10$</button>
+                    <button class="preset-btn" data-value="15">15$</button>
+                    <button class="preset-btn" data-value="20">20$</button>
+                    <button class="preset-btn" data-value="30">30$</button>
+                    <button class="preset-btn" data-value="50">50$</button>
+                </div>
+            </div>
+
+            <div class="range-preview-section">
+                <h4 class="preview-title">Prévisualisation du Range:</h4>
+                <div class="preview-grid">
+                    <div class="preview-item">
+                        <span class="preview-label">Prix actuel BNB:</span>
+                        <span class="preview-value current-price" id="current-price-preview">$0.00</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Prix inférieur:</span>
+                        <span class="preview-value range-min" id="range-lower">$0.00</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Prix supérieur:</span>
+                        <span class="preview-value range-max" id="range-upper">$0.00</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Écart total:</span>
+                        <span class="preview-value range-spread" id="range-spread">$0.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="range-info-section">
+                <h4 class="info-title">Informations:</h4>
+                <div class="info-content">
+                    <p>• Plus l'écart est petit, plus les frais sont élevés</p>
+                    <p>• Plus l'écart est grand, plus la liquidité est stable</p>
+                    <p>• Recommandé: 10-20$ pour un bon équilibre</p>
+                </div>
+            </div>
+
+            <button class="save-range-btn" id="save-range-btn">
+                <i class="fas fa-save"></i>
+                Sauvegarder et Utiliser
+            </button>
+        </div>
+    </main>
+
+    <!-- ========== NOTIFICATIONS ========== -->
+    <div id="notifications-container" class="notifications-container"></div>
+
+    <!-- Modale de connexion wallet (gaming UX, logos officiels) -->
+    <div id="walletModal" class="wallet-modal hidden">
+      <div class="wallet-modal-content">
+        <h2>SÉLECTION DU WALLET</h2>
+        <p>Branchez votre équipement :</p>
+        <div class="wallet-logos-options">
+          <div class="wallet-option" id="connect-metamask">
+            <img src="/assets/images/icons/metamask.svg" alt="MetaMask" class="wallet-logo" />
+            <div class="wallet-identifier">MetaMask</div>
+          </div>
+          <div class="wallet-option" id="connect-walletconnect">
+            <img src="/assets/images/icons/walletconnect.svg" alt="WalletConnect" class="wallet-logo wallet-logo-walletconnect" />
+            <div class="wallet-identifier">WalletConnect</div>
+          </div>
+          <div class="wallet-option" id="connect-phantom" style="display:none;">
+            <img src="/assets/images/icons/phantom.svg" alt="Phantom" class="wallet-logo" />
+            <div class="wallet-identifier">Phantom</div>
+          </div>
+        </div>
+        <button id="close-wallet-modal" class="close-btn">Annuler</button>
+      </div>
+    </div>
+
+    <!-- Modale QR dédiée WalletConnect (style identique, séparée) -->
+    <div id="walletQRModal" class="wallet-modal hidden">
+      <div class="wallet-modal-content">
+        <h2>SCANNER LE QR</h2>
+        <p>Utilisez votre wallet mobile pour scanner et connecter.</p>
+        <div id="walletqr-qrcode" class="qr-box"></div>
+        <button id="close-walletqr-modal" class="close-btn">Annuler</button>
+      </div>
+    </div>
+
+    <!-- WalletConnect via ESM modules (plus moderne et fiable) -->
+    <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+    <!-- WalletConnect v2 via ES modules -->
+    <script type="module">
+    import { EthereumProvider } from 'https://esm.sh/@walletconnect/ethereum-provider@2.13.0';
+    window.WalletConnectEthereumProvider = EthereumProvider;
+    console.log('✅ WalletConnect chargé via ESM:', !!EthereumProvider);
+    window.dispatchEvent(new CustomEvent('walletconnect-loaded'));
+    </script>
+    <!-- Librairie QRCode (pour QR WalletConnect custom dans notre modal) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Fallback si ESM ne marche pas -->
+    <script>
+    setTimeout(() => {
+        if (!window.WalletConnectEthereumProvider) {
+            console.warn('🔄 ESM failed, trying alternative approach...');
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/@web3modal/standalone@2.4.3/dist/index.js';
+            script.onload = () => {
+                console.log('✅ Web3Modal standalone chargé');
+                window.WalletConnectEthereumProvider = {
+                    init: async (config) => {
+                        console.log('🔄 Init WalletConnect via Web3Modal...');
+                        const modal = new window.Web3Modal.WalletConnectModal({
+                            projectId: config.projectId,
+                            chains: config.chains
+                        });
+                        return {
+                            enable: async () => {
+                                console.log('🚀 Opening WalletConnect modal...');
+                                return await modal.openModal();
+                            },
+                            on: () => {},
+                            removeListener: () => {},
+                            disconnect: async () => {
+                                await modal.closeModal();
+                            }
+                        };
+                    }
+                };
+                window.dispatchEvent(new CustomEvent('walletconnect-loaded'));
+            };
+            document.head.appendChild(script);
+        }
+    }, 3000);
+    </script>
+    <!-- Scripts dans l'ordre optimisé pour éviter les conflits -->
+    <script src="js/core/init-control.js"></script>
+    <script src="js/core/event-emitter.js"></script>
+    <script src="js/core/logging.js"></script>
+    <script src="js/core/refactor-guard.js"></script>
+    <script src="js/core/ui-contract.js"></script>
+    <script src="js/core/wallet-header.js"></script>
+    <script src="js/config/metamask-config.js"></script>
+    <script src="js/config/appkit-config.js"></script>
+    <!-- Bundle local AppKit Solana -->
+    <script src="assets/js/vendor/appkit-solana.bundle.js"></script>
+    <script src="js/config/phantom-config.js"></script>
+    <script src="js/config/solana-injected.js"></script>
+    <script src="js/config/walletconnect-solana.js"></script>
+    <script src="js/core/api-client.js"></script>
+    <script>
+      // Wiring fermeture modale QR
+      document.addEventListener('DOMContentLoaded', function() {
+        const close = document.getElementById('close-walletqr-modal');
+        if (close) close.addEventListener('click', function() {
+          if (window.BoomboxWalletQRModal) window.BoomboxWalletQRModal.hide();
+        });
+      });
+    </script>
+    <script src="js/utils/notifications.js"></script>
+    <script src="js/core/services/price-service.js"></script>
+    <script src="js/core/price-monitor.js"></script>
+    <script src="js/core/balances-updater.js"></script>
+    <script src="js/core/wallet-modal-controller.js"></script>
+    <script src="js/core/positions-updater.js"></script>
+    <script src="js/core/nav-dots-controller.js"></script>
+    <script src="js/core/chain-manager.js"></script>
+    <script src="js/core/chain-selector-controller.js"></script>
+    <script src="js/core/music-controller.js"></script>
+    <script src="js/core/range-config-controller.js"></script>
+    <script src="js/core/notification-manager.js"></script>
+    <script src="js/core/provider-manager.js"></script>
+    <script src="js/main.js"></script>
+    <script src="assets/js/boombox-gaming.js"></script>
+    <script src="js/diagnostic.js"></script>
+    <!-- <script src="js/debug-ultra-precise.js"></script> -->
+
+    <script>
+    window.addEventListener('load', function() {
+        console.log('=== VÉRIFICATIONS BOOMSWAP WALLETCONNECT V2 EVENT ===');
+        console.log('✅ Web3:', !!window.Web3);
+        console.log('✅ WalletConnect EthereumProvider:', !!window.WalletConnectEthereumProvider);
+        console.log('✅ WalletConnect Ready:', !!window.BOOMSWAP_WALLETCONNECT_READY);
+        console.log('✅ Connect MetaMask function:', !!window.BOOMSWAP_CONNECT_METAMASK);
+        console.log('✅ Connect WalletConnect function:', !!window.BOOMSWAP_CONNECT_WALLETCONNECT);
+        console.log('📋 Project ID:', window.BOOMSWAP_PROJECT_ID);
+        // Vérification différée pour WalletConnect
+        setTimeout(() => {
+            console.log('=== VÉRIFICATIONS DIFFÉRÉES (10s) ===');
+            console.log('✅ WalletConnect EthereumProvider (10s):', !!window.WalletConnectEthereumProvider);
+            console.log('✅ WalletConnect Ready (10s):', !!window.BOOMSWAP_WALLETCONNECT_READY);
+            if (window.BOOMSWAP_CONNECT_METAMASK && window.BOOMSWAP_CONNECT_WALLETCONNECT) {
+                if (window.BOOMSWAP_WALLETCONNECT_READY) {
+                    console.log('🎉 BOOMSWAP WALLET V2 COMPLET!');
+                    console.log('🦊 MetaMask + 📱 WalletConnect QR TOUS DISPONIBLES');
+                } else {
+                    console.log('🎉 BOOMSWAP WALLET V2 PARTIEL!');
+                    console.log('🦊 MetaMask disponible, 📱 WalletConnect en cours...');
+                }
+                console.log('🌐 Réseaux: BSC, Arbitrum, Base');
+            } else {
+                console.error('❌ Problème initialisation wallet v2');
+            }
+        }, 10000);
+    });
+    </script>
+</body>
+</html>
+
+
+
