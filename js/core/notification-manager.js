@@ -52,10 +52,15 @@ class BoomboxNotificationManager {
 
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
-        notification.innerHTML = `
-            <span class="notification-message">${this.escapeHtml(message)}</span>
-            <button class="notification-close" onclick="this.parentElement.remove()">×</button>
-        `;
+        const messageSpan = document.createElement('span');
+        messageSpan.className = 'notification-message';
+        messageSpan.innerHTML = this.escapeHtml(message);
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'notification-close';
+        closeBtn.textContent = '×';
+        closeBtn.addEventListener('click', () => this.removeNotification(notification));
+        notification.appendChild(messageSpan);
+        notification.appendChild(closeBtn);
 
         container.appendChild(notification);
         this.notifications.push({ element: notification, timestamp: Date.now() });

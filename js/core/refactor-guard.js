@@ -130,15 +130,41 @@
   function detectMixedConcerns() {
     try {
       // Scripts inline (balises <script> sans src)
-      const inlineScripts = Array.from(
-        document.querySelectorAll('script:not([src])')
-      );
+      const inlineScripts = Array
+        .from(document.querySelectorAll('script:not([src])'))
+        .filter((el) => {
+          // Ignorer scripts injectés dans/avec WalletConnect/Web3Modal
+          try {
+            const parent = el.closest('wcm-modal, wcm-root, [class*="wcm-"], .wcm-modal, .web3modal');
+            if (parent) return false;
+          } catch (_) {}
+          return true;
+        });
 
-      // Balises <style>
-      const styleTags = Array.from(document.querySelectorAll('style'));
+      // Balises <style> (filtrer styles tiers connus: WalletConnect/Web3Modal)
+      const styleTags = Array
+        .from(document.querySelectorAll('style'))
+        .filter((el) => {
+          try {
+            const txt = (el.textContent || '').toLowerCase();
+            // Whitelist tiers: wcm- (WalletConnect), web3modal
+            if (txt.includes('wcm-') || txt.includes('web3modal')) return false;
+          } catch (_) {}
+          return true;
+        });
 
-      // Attributs style inline
-      const inlineStyles = Array.from(document.querySelectorAll('[style]'));
+      // Attributs style inline (filtrer styles tiers et QR)
+      const inlineStyles = Array
+        .from(document.querySelectorAll('[style]'))
+        .filter((el) => {
+          try {
+            const tag = (el.tagName || '').toLowerCase();
+            if (tag.startsWith('wcm-')) return false;
+            if (el.closest('wcm-modal, wcm-root, [class*="wcm-"], .wcm-modal, .web3modal')) return false;
+            if (el.closest('#walletqr-qrcode')) return false; // QRCodeJS injecte des styles inline
+          } catch (_) {}
+          return true;
+        });
 
       // Handlers inline (liste restreinte suffisante)
       const handlerSelectors = [

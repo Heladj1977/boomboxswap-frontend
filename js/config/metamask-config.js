@@ -3,7 +3,7 @@
  * Gestionnaire dédié pour MetaMask uniquement avec protection robuste
  */
 
-console.log('🦊 Initialisation système MetaMask BOOMBOXSWAP...');
+console.log('Initialisation système MetaMask BOOMBOXSWAP...');
 
 // ===== ÉTAT GLOBAL ROBUSTE =====
 let isConnecting = false;
@@ -54,13 +54,13 @@ async function connectMetaMaskRobust() {
     
     connectionTimeout = setTimeout(() => {
         const timeoutTimestamp = Date.now();
-        console.warn(`🎯 AUDIT [${timeoutTimestamp}]: TIMEOUT CONNEXION METAMASK - DÉBLOQUAGE AUTOMATIQUE`);
+        console.warn(`AUDIT [${timeoutTimestamp}]: TIMEOUT CONNEXION METAMASK - DEBLOQUAGE AUTOMATIQUE`);
         resetMetaMaskState();
     }, CONNECTION_TIMEOUT);
     
     try {
         // VÉRIFIER METAMASK DISPONIBLE
-        console.log(`🎯 AUDIT [${timestamp}]: Vérification MetaMask disponible...`);
+        console.log(`AUDIT [${timestamp}]: Vérification MetaMask disponible...`);
         if (!window.ethereum) {
             throw new Error('METAMASK_NOT_FOUND');
         }
@@ -86,16 +86,16 @@ async function connectMetaMaskRobust() {
         } catch (_) {}
 
         // DEMANDE CONNEXION EVM (UN SEUL APPEL)
-        console.log(`🎯 AUDIT [${timestamp}]: Appel eth_requestAccounts...`);
+        console.log(`AUDIT [${timestamp}]: Appel eth_requestAccounts...`);
         
         // ===== INVESTIGATION DÉTAILLÉE =====
-        console.log(`🎯 INVESTIGATION: AVANT eth_requestAccounts`);
-        console.log(`🎯 INVESTIGATION: Timestamp exact:`, performance.now());
-        console.log(`🎯 INVESTIGATION: Stack trace:`, new Error().stack);
-        console.log(`🎯 INVESTIGATION: Appels précédents:`, window.INVESTIGATION_CALLS?.length || 0);
+        console.log(`INVESTIGATION: AVANT eth_requestAccounts`);
+        console.log(`INVESTIGATION: Timestamp exact:`, performance.now());
+        console.log(`INVESTIGATION: Stack trace:`, new Error().stack);
+        console.log(`INVESTIGATION: Appels précédents:`, window.INVESTIGATION_CALLS?.length || 0);
         
         // ===== CORRECTION CHIRURGICALE : SUPPRESSION DÉLAI FORCED =====
-        console.log(`🎯 CORRECTION: Délai 2 secondes supprimé - réactivité immédiate`);
+        console.log(`CORRECTION: Délai 2 secondes supprimé - réactivité immédiate`);
         // SUPPRIMÉ : await new Promise(resolve => setTimeout(resolve, 2000));
         // RÉSULTAT : Appel eth_requestAccounts immédiat
         
@@ -103,19 +103,19 @@ async function connectMetaMaskRobust() {
             method: 'eth_requestAccounts'
         });
         
-        console.log(`🎯 INVESTIGATION: APRÈS eth_requestAccounts réussi`);
-        console.log(`🎯 INVESTIGATION: Résultat:`, accounts);
-        console.log(`🎯 INVESTIGATION: Total appels après:`, window.INVESTIGATION_CALLS?.length || 0);
+        console.log(`INVESTIGATION: APRÈS eth_requestAccounts réussi`);
+        console.log(`INVESTIGATION: Résultat:`, accounts);
+        console.log(`INVESTIGATION: Total appels après:`, window.INVESTIGATION_CALLS?.length || 0);
         
-        console.log(`🎯 AUDIT [${timestamp}]: Réponse eth_requestAccounts:`, accounts);
+        console.log(`AUDIT [${timestamp}]: Réponse eth_requestAccounts:`, accounts);
         
         if (accounts && accounts.length > 0) {
             const address = accounts[0];
-            console.log(`🎯 AUDIT [${timestamp}]: METAMASK CONNECTÉ:`, address);
+            console.log(`AUDIT [${timestamp}]: METAMASK CONNECTE:`, address);
             
             // Récupérer le chainId courant du wallet
             let chainId = parseInt(await window.ethereum.request({ method: 'eth_chainId' }));
-            console.log(`🎯 AUDIT [${timestamp}]: ChainId récupéré (wallet):`, chainId);
+            console.log(`AUDIT [${timestamp}]: ChainId récupéré (wallet):`, chainId);
 
             // Aligner le wallet sur la chaîne sélectionnée dans l'UI si différente
             try {
@@ -123,7 +123,7 @@ async function connectMetaMaskRobust() {
                     ? window.BoomboxChainManager.getCurrentChain().id
                     : 56;
                 if (desired && chainId !== desired) {
-                    console.log(`🎯 AUDIT [${timestamp}]: Incohérence chain détectée (UI=${desired}, wallet=${chainId}) → tentative de switch MetaMask`);
+                    console.log(`AUDIT [${timestamp}]: Incohérence chain détectée (UI=${desired}, wallet=${chainId}) → tentative de switch MetaMask`);
                     const desiredHex = '0x' + desired.toString(16);
                     try {
                         await window.ethereum.request({
@@ -131,7 +131,7 @@ async function connectMetaMaskRobust() {
                             params: [{ chainId: desiredHex }]
                         });
                         chainId = desired;
-                        console.log(`🎯 AUDIT [${timestamp}]: Switch réseau réussi → ${desired}`);
+                        console.log(`AUDIT [${timestamp}]: Switch réseau réussi → ${desired}`);
                     } catch (err) {
                         if (err && (err.code === 4902 || err.code === -32603)) {
                             // Réseau absent → tentative d'ajout
@@ -150,7 +150,7 @@ async function connectMetaMaskRobust() {
                                         params: [target.addParams]
                                     });
                                     chainId = desired;
-                                    console.log(`🎯 AUDIT [${timestamp}]: Ajout réseau et switch réussis → ${desired}`);
+                                    console.log(`AUDIT [${timestamp}]: Ajout réseau et switch réussis → ${desired}`);
                                 } catch (addErr) {
                                     console.warn('Ajout réseau MetaMask refusé', addErr);
                                 }
@@ -169,6 +169,8 @@ async function connectMetaMaskRobust() {
             window.BOOMSWAP_CURRENT_ADDRESS = address;
             window.BOOMSWAP_CURRENT_CHAIN_ID = chainId;
             try { window.BOOMSWAP_EVM_ADDRESS = address; } catch (_) {}
+            // Lever tout verrou Solana éventuel
+            try { window.BOOMB_WALLET_UI_LOCK = null; window.BOOMB_WALLET_LOCK_LABEL = null; } catch (_) {}
 
             // Synchroniser l'UI avec le wallet (au cas où switch a changé la chaîne)
             try {
@@ -182,6 +184,7 @@ async function connectMetaMaskRobust() {
             
             currentConnectionState = CONNECTION_STATES.CONNECTED;
             updateWalletUI('connected', address);
+            try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
             
             // Configurer les event listeners APRÈS connexion réussie
             setupMetaMaskEvents(window.ethereum);
@@ -194,13 +197,13 @@ async function connectMetaMaskRobust() {
         
     } catch (error) {
         const errorTimestamp = Date.now();
-        console.error(`🎯 AUDIT [${errorTimestamp}]: MISSION CONNEXION METAMASK ÉCHOUÉE:`, error);
-        console.error(`🎯 AUDIT [${errorTimestamp}]:   - Code:`, error.code);
-        console.error(`🎯 AUDIT [${errorTimestamp}]:   - Message:`, error.message);
+        console.error(`AUDIT [${errorTimestamp}]: MISSION CONNEXION METAMASK ECHOUEE:`, error);
+        console.error(`AUDIT [${errorTimestamp}]:   - Code:`, error.code);
+        console.error(`AUDIT [${errorTimestamp}]:   - Message:`, error.message);
         
         // GESTION SPÉCIFIQUE "Already processing"
         if (error.message && error.message.includes('Already processing')) {
-            console.log(`🎯 AUDIT [${errorTimestamp}]: AUTRE CONNEXION EN COURS - ATTENTE...`);
+            console.log(`AUDIT [${errorTimestamp}]: AUTRE CONNEXION EN COURS - ATTENTE...`);
             return null;
         }
         
@@ -221,37 +224,37 @@ async function connectMetaMaskRobust() {
             updateWalletUI('disconnected');
         }
         
-        console.log(`🎯 AUDIT [${cleanupTimestamp}]: NETTOYAGE CONNEXION METAMASK TERMINÉ`);
-        console.log(`🎯 AUDIT [${cleanupTimestamp}]:   - isConnecting:`, isConnecting);
-        console.log(`🎯 AUDIT [${cleanupTimestamp}]:   - currentConnectionState:`, currentConnectionState);
+        console.log(`AUDIT [${cleanupTimestamp}]: NETTOYAGE CONNEXION METAMASK TERMINE`);
+        console.log(`AUDIT [${cleanupTimestamp}]:   - isConnecting:`, isConnecting);
+        console.log(`AUDIT [${cleanupTimestamp}]:   - currentConnectionState:`, currentConnectionState);
     }
 }
 
 // ===== VÉRIFICATION CONNEXION EXISTANTE =====
 async function checkExistingConnection() {
     const timestamp = Date.now();
-    console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: === CHECK EXISTING CONNECTION DÉMARRÉ ===`);
-    console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: État système au début:`);
-    console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]:   - window.ethereum:`, !!window.ethereum);
-    console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]:   - isConnecting:`, isConnecting);
-    console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]:   - currentConnectionState:`, currentConnectionState);
-    console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]:   - BOOMSWAP_CURRENT_ADDRESS:`, window.BOOMSWAP_CURRENT_ADDRESS);
+    console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: === CHECK EXISTING CONNECTION DEMARRE ===`);
+    console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: Etat système au début:`);
+    console.log(`AUDIT AUTO-CONNEXION [${timestamp}]:   - window.ethereum:`, !!window.ethereum);
+    console.log(`AUDIT AUTO-CONNEXION [${timestamp}]:   - isConnecting:`, isConnecting);
+    console.log(`AUDIT AUTO-CONNEXION [${timestamp}]:   - currentConnectionState:`, currentConnectionState);
+    console.log(`AUDIT AUTO-CONNEXION [${timestamp}]:   - BOOMSWAP_CURRENT_ADDRESS:`, window.BOOMSWAP_CURRENT_ADDRESS);
     
     try {
         if (window.ethereum) {
-            console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: window.ethereum disponible, appel eth_accounts...`);
-            console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]:   - Méthode: eth_accounts (silencieux, pas de popup)`);
+            console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: window.ethereum disponible, appel eth_accounts...`);
+            console.log(`AUDIT AUTO-CONNEXION [${timestamp}]:   - Méthode: eth_accounts (silencieux, pas de popup)`);
             
             const accounts = await window.ethereum.request({
                 method: 'eth_accounts'  // CORRECTION : Utiliser eth_accounts (silencieux)
             });
             
-            console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: Réponse eth_accounts:`, accounts);
-            console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: Comptes trouvés:`, accounts.length);
+            console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: Réponse eth_accounts:`, accounts);
+            console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: Comptes trouvés:`, accounts.length);
             
             if (accounts && accounts.length > 0) {
                 const address = accounts[0];
-                console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: METAMASK DÉJÀ CONNECTÉ:`, address);
+                console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: METAMASK DEJA CONNECTE:`, address);
                 
                 // ===== CORRECTION CHIRURGICALE : SUPPRESSION AUTO-CONNEXION =====
                 // ❌ SUPPRIMÉ : Auto-connexion automatique
@@ -260,23 +263,23 @@ async function checkExistingConnection() {
                 // ❌ SUPPRIMÉ : Définition variables globales
                 
                 // ✅ REMPLACÉ PAR : Détection silencieuse seulement
-                console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: DÉTECTION SILENCIEUSE - MetaMask disponible pour connexion manuelle`);
-                console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: ℹ️ Utilisateur doit cliquer pour se connecter (pas d'auto-connexion)`);
+                console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: DETECTION SILENCIEUSE - MetaMask disponible pour connexion manuelle`);
+                console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: Information: Utilisateur doit cliquer pour se connecter (pas d'auto-connexion)`);
                 
                 // Retourner null pour indiquer qu'aucune connexion automatique n'a été effectuée
                 return null;
             } else {
-                console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: Aucun compte connecté`);
+                console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: Aucun compte connecté`);
             }
         } else {
-            console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: window.ethereum non disponible`);
+            console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: window.ethereum non disponible`);
         }
     } catch (error) {
-        console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: Erreur checkExistingConnection:`, error);
+        console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: Erreur checkExistingConnection:`, error);
     }
     
-    console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: AUCUNE CONNEXION PRÉCÉDENTE`);
-    console.log(`🎯 AUDIT AUTO-CONNEXION [${timestamp}]: === CHECK EXISTING CONNECTION TERMINÉ ===`);
+    console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: AUCUNE CONNEXION PRECEDENTE`);
+    console.log(`AUDIT AUTO-CONNEXION [${timestamp}]: === CHECK EXISTING CONNECTION TERMINE ===`);
     return null;
 }
 
@@ -291,7 +294,7 @@ function resetMetaMaskState() {
     }
     
     updateWalletUI('disconnected');
-    console.log('🔄 ÉTAT METAMASK RÉINITIALISÉ');
+    console.log('ETAT METAMASK REINITIALISE');
 }
 
 // ===== MESSAGES GAMING =====
@@ -376,25 +379,36 @@ function showGamingFeedback(message) {
     if (window.showNotification) {
         window.showNotification(message, 'info');
     } else {
-        console.log('📢 FEEDBACK:', message);
+    console.log('FEEDBACK:', message);
     }
 }
 
 // ===== FONCTION POUR CONFIGURER LES EVENT LISTENERS META MASK APRÈS CONNEXION =====
 function setupMetaMaskEvents(provider) {
-    console.log('🔧 Configuration events MetaMask...');
+    console.log('Configuration events MetaMask...');
     
     // CLEANUP : Supprimer tous les event listeners existants pour éviter les doublons
     try {
         provider.removeAllListeners();
-        console.log('🧹 Event listeners existants supprimés');
+        console.log('Event listeners existants supprimés');
     } catch (error) {
-        console.log('ℹ️ Aucun event listener existant à supprimer');
+        console.log('Aucun event listener existant à supprimer');
     }
     
+    // Événement de connexion initiale (EIP-1193)
+    provider.on('connect', (info) => {
+        console.log('Connexion MetaMask détectée', info);
+        try { updateWalletUI('connected', window.BOOMSWAP_CURRENT_ADDRESS || null); } catch (_) {}
+        try {
+            if (window.BoomboxApp && window.BoomboxApp.onWalletConnected) {
+                window.BoomboxApp.onWalletConnected({});
+            }
+        } catch (_) {}
+    });
+
     // Écouter changements d'account
     provider.on('accountsChanged', async (accounts) => {
-        console.log('🔄 Comptes MetaMask changés:', accounts);
+        console.log('Comptes MetaMask changés:', accounts);
         if (accounts && accounts.length > 0) {
             // Connexion ou changement de compte
             const address = accounts[0];
@@ -412,6 +426,8 @@ function setupMetaMaskEvents(provider) {
                         numericChainId
                     );
                 }
+                try { window.BOOMSWAP_EVM_ADDRESS = address; } catch (_) {}
+                try { window.BOOMB_WALLET_UI_LOCK = null; window.BOOMB_WALLET_LOCK_LABEL = null; } catch (_) {}
 
                 // Appel API positions via ApiClient
                 let positions = [];
@@ -428,6 +444,8 @@ function setupMetaMaskEvents(provider) {
                 if (window.BoomboxApp && window.BoomboxApp.onWalletConnected) {
                     window.BoomboxApp.onWalletConnected({ balances, positions });
                 }
+                try { updateWalletUI('connected', address); } catch (_) {}
+                try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
             } catch (e) {
                 console.error('Erreur récupération balances:', e);
             }
@@ -436,13 +454,15 @@ function setupMetaMaskEvents(provider) {
             if (window.BoomboxApp && window.BoomboxApp.onWalletDisconnected) {
                 window.BoomboxApp.onWalletDisconnected();
             }
+            try { window.BOOMSWAP_EVM_ADDRESS = null; } catch (_) {}
+            try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
         }
     });
     
     // Écouter changements de réseau
     provider.on('chainChanged', (chainId) => {
         const newChainId = parseInt(chainId);
-        console.log('⛓️ Réseau MetaMask changé:', newChainId);
+        console.log('Reseau MetaMask change:', newChainId);
         window.BOOMSWAP_CURRENT_CHAIN_ID = newChainId;
         if (window.BoomboxApp && window.BoomboxApp.handleNetworkChanged) {
             window.BoomboxApp.handleNetworkChanged(newChainId);
@@ -458,32 +478,36 @@ function setupMetaMaskEvents(provider) {
     
     // Écouter déconnexion
     provider.on('disconnect', () => {
-        console.log('🔌 Provider MetaMask déconnecté');
+        console.log('Provider MetaMask deconnecte');
         if (window.BoomboxApp && window.BoomboxApp.onWalletDisconnected) {
             window.BoomboxApp.onWalletDisconnected();
         }
+        try { window.BOOMSWAP_EVM_ADDRESS = null; } catch (_) {}
+        try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
     });
     
-    console.log('✅ Events MetaMask configurés');
+    console.log('Events MetaMask configures');
 }
 
 // ===== FONCTION DE DÉCONNEXION META MASK =====
 window.BOOMSWAP_DISCONNECT_METAMASK = async function() {
     try {
-        console.log('🔌 Déconnexion MetaMask...');
+        console.log('Deconnexion MetaMask...');
         
         // Reset variables globales
         window.BOOMSWAP_CURRENT_PROVIDER = null;
         window.BOOMSWAP_CURRENT_WEB3 = null;
         window.BOOMSWAP_CURRENT_ADDRESS = null;
         window.BOOMSWAP_CURRENT_CHAIN_ID = null;
+        try { window.BOOMSWAP_EVM_ADDRESS = null; } catch (_) {}
         
         // Reset état local
         resetMetaMaskState();
         
-        console.log('✅ MetaMask déconnecté');
+        console.log('MetaMask deconnecte');
+        try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
     } catch (error) {
-        console.error('❌ Erreur déconnexion MetaMask:', error);
+        console.error('Erreur deconnexion MetaMask:', error);
     }
 };
 
@@ -507,6 +531,7 @@ if (window.ethereum && window.ethereum.on) {
                 if (cakeEl) cakeEl.textContent = '0.000000';
                 if (totalEl) totalEl.textContent = '$0.00';
             } catch (_) {}
+            try { window.BOOMSWAP_EVM_ADDRESS = null; } catch (_) {}
         }
     });
 }
@@ -537,6 +562,6 @@ async function checkExistingConnectionOnStartup() {
 
 // Initialiser au chargement (sans requête au provider)
 const initTimestamp = Date.now();
-console.log(`🎯 AUDIT AUTO-CONNEXION [${initTimestamp}]: === INITIALISATION METAMASK AU CHARGEMENT (SANS eth_accounts) ===`);
+console.log(`AUDIT AUTO-CONNEXION [${initTimestamp}]: === INITIALISATION METAMASK AU CHARGEMENT (SANS eth_accounts) ===`);
 // IMPORTANT: NE PAS appeler checkExistingConnectionOnStartup pour éviter eth_accounts automatique
-console.log('✅ Configuration MetaMask BOOMBOXSWAP initialisée');
+console.log('Configuration MetaMask BOOMBOXSWAP initialisee');

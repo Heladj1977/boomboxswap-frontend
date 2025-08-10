@@ -242,9 +242,14 @@ window.BOOMSWAP_CONNECT_WALLETCONNECT = async function() {
                             window.BOOMSWAP_CURRENT_PROVIDER = provider;
                             window.BOOMSWAP_CURRENT_WEB3 = web3tmp;
                             window.BOOMSWAP_CURRENT_ADDRESS = addr;
+                            try { window.BOOMSWAP_EVM_ADDRESS = addr; } catch (_) {}
                             window.BOOMSWAP_CURRENT_CHAIN_ID = chId;
+                            try { window.BOOMB_WALLET_UI_LOCK = null; window.BOOMB_WALLET_LOCK_LABEL = null; } catch (_) {}
                             if (window.BoomboxWalletQRModal) window.BoomboxWalletQRModal.hide();
                             if (window.BoomboxWalletModal) window.BoomboxWalletModal.hide();
+                            // Forcer mise à jour bouton/entête immédiatement
+                            try { updateWalletUI && updateWalletUI('connected', addr); } catch (_) {}
+                            try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
                             if (window.BoomboxApp && typeof window.BoomboxApp.handleWalletConnected === 'function') {
                                 // Compat: main.js expose handleWalletConnected sur l'instance
                                 window.BoomboxApp.handleWalletConnected(addr, chId);
@@ -275,6 +280,9 @@ window.BOOMSWAP_CONNECT_WALLETCONNECT = async function() {
                     if (window.BoomboxApp && window.BoomboxApp.onWalletDisconnected) {
                         window.BoomboxApp.onWalletDisconnected();
                     }
+                    try { window.BOOMSWAP_EVM_ADDRESS = null; } catch (_) {}
+                    try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
+                    try { updateWalletUI && updateWalletUI('disconnected'); } catch (_) {}
                 });
             }
         } catch (e) {
@@ -347,7 +355,12 @@ window.BOOMSWAP_CONNECT_WALLETCONNECT = async function() {
         window.BOOMSWAP_CURRENT_PROVIDER = provider;
         window.BOOMSWAP_CURRENT_WEB3 = web3;
         window.BOOMSWAP_CURRENT_ADDRESS = address;
+        try { window.BOOMSWAP_EVM_ADDRESS = address; } catch (_) {}
         window.BOOMSWAP_CURRENT_CHAIN_ID = chainId;
+        try { window.BOOMB_WALLET_UI_LOCK = null; window.BOOMB_WALLET_LOCK_LABEL = null; } catch (_) {}
+        // Forcer synchro UI bouton + entête
+        try { updateWalletUI && updateWalletUI('connected', address); } catch (_) {}
+        try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
         console.log('[WALLETCONNECT] Connecté:', address);
         console.log('[WALLETCONNECT] Chain ID:', chainId);
         // Nettoyage QR de notre modal après connexion
@@ -390,7 +403,9 @@ window.BOOMSWAP_DISCONNECT = async function() {
         window.BOOMSWAP_CURRENT_WEB3 = null;
         window.BOOMSWAP_CURRENT_ADDRESS = null;
         window.BOOMSWAP_CURRENT_CHAIN_ID = null;
+        try { window.BOOMSWAP_EVM_ADDRESS = null; } catch (_) {}
         console.log('✅ Déconnecté');
+        try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
     } catch (error) {
         console.error('❌ Erreur déconnexion:', error);
     }

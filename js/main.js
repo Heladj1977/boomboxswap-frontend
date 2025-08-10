@@ -32,10 +32,10 @@ try {
 } catch (_) {
     // Si Unicode regex indisponible, ignorer silencieusement
 }
-console.log('🎯 AUDIT FORENSIQUE: === SURVEILLANCE UI MODAL WALLET DÉMARRÉE ===');
+console.log('AUDIT FORENSIQUE: === SURVEILLANCE UI MODAL WALLET DEMARREE ===');
 
 // ===== SURVEILLANCE FORENSIQUE SOLDES CARD 1 =====
-console.log('🎯 AUDIT SOLDES: === SURVEILLANCE WORKFLOW SOLDES DÉMARRÉE ===');
+console.log('AUDIT SOLDES: === SURVEILLANCE WORKFLOW SOLDES DEMARREE ===');
 
 // Timeline des soldes pour tracer le workflow complet
 window.SOLDES_TIMELINE = [];
@@ -48,7 +48,7 @@ function logSoldesEvent(event, details) {
         stack: new Error().stack
     };
     window.SOLDES_TIMELINE.push(entry);
-    console.log('🎯 AUDIT SOLDES:', entry);
+    console.log('AUDIT SOLDES:', entry);
 }
 
 // Intercepter les appels API getBalances
@@ -58,7 +58,7 @@ if (window.BoomboxAPI && originalGetBalances) {
         logSoldesEvent('API_CALL_START', {
             address: address,
             chainId: chainId,
-            url: `${this.baseUrl}/api/v1/data/balances/${address}?chain_id=${chainId}`
+            endpoint: 'getBalances'
         });
         
         try {
@@ -1445,20 +1445,20 @@ class BoomboxApp {
         
         // Afficher le nom du réseau
         const networkName = this.getNetworkName(chainId);
-        console.log(`🎯 AUDIT SOLDES [${timestamp}]: Réseau actuel: ${networkName}`);
+        console.log(`AUDIT SOLDES [${timestamp}]: Réseau actuel: ${networkName}`);
         
         // --- SYNCHRONISATION BACKEND ---
         const apiUrl = window.BoomboxAPI.baseUrl;
-        console.log(`🎯 AUDIT SOLDES [${timestamp}]: === APPEL API BALANCES ===`);
-        console.log(`🎯 AUDIT SOLDES [${timestamp}]: URL appelée: ${apiUrl}/api/v1/data/balances/${address}?chain_id=${chainId}`);
-        console.log(`🎯 AUDIT SOLDES [${timestamp}]: Headers envoyés: Content-Type: application/json`);
+        console.log(`AUDIT SOLDES [${timestamp}]: === APPEL API BALANCES ===`);
+        console.log(`AUDIT SOLDES [${timestamp}]: Appel via ApiClient.getBalances`);
+        console.log(`AUDIT SOLDES [${timestamp}]: Headers envoyés: Content-Type: application/json`);
         
         const handleBalances = (balances) => {
                 try { (window.WALLET_TIMELINE ||= []).push({ t: Date.now(), e: 'balances_received', balances }); } catch (_) {}
                 const responseTimestamp = Date.now();
-                console.log(`🎯 AUDIT SOLDES [${responseTimestamp}]: === RÉPONSE API BALANCES ===`);
-                console.log(`🎯 AUDIT SOLDES [${responseTimestamp}]: Status réponse: 200 OK`);
-                console.log(`🎯 AUDIT SOLDES [${responseTimestamp}]: Données reçues:`, balances);
+                console.log(`AUDIT SOLDES [${responseTimestamp}]: === RÉPONSE API BALANCES ===`);
+                console.log(`AUDIT SOLDES [${responseTimestamp}]: Status réponse: 200 OK`);
+                console.log(`AUDIT SOLDES [${responseTimestamp}]: Données reçues:`, balances);
                 
                 logSoldesEvent('BALANCES_RECEIVED', {
                     balances: balances,
@@ -1600,27 +1600,29 @@ class BoomboxApp {
         try { (window.WALLET_TIMELINE ||= []).push({ t: timestamp, e: 'handleWalletDisconnected' }); } catch (_) {}
         console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]: État AVANT déconnexion:`);
         
-        // Reset bouton wallet
+        // Reset bouton wallet non destructif
         const walletBtn = document.getElementById('wallet-btn');
         if (walletBtn) {
             console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]: Bouton wallet trouvé, état AVANT modification:`);
             console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Text content:`, walletBtn.textContent);
             console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Classes:`, walletBtn.className);
-            console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Style background:`, walletBtn.style.background);
-            console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Style color:`, walletBtn.style.color);
             console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Disabled:`, walletBtn.disabled);
-            
-            // Modifications
-            walletBtn.textContent = 'Connecter Wallet';
-            walletBtn.classList.remove('connected');
-            walletBtn.style.background = '#ef4444'; // Rouge par défaut
-            walletBtn.style.color = '#ffffff';
-            
+
+            let walletBtnText = document.getElementById('wallet-btn-text');
+            if (!walletBtnText) {
+                walletBtnText = document.createElement('span');
+                walletBtnText.id = 'wallet-btn-text';
+                walletBtn.innerHTML = '';
+                walletBtn.appendChild(walletBtnText);
+            }
+
+            walletBtnText.textContent = 'Connecter Wallet';
+            walletBtn.className = 'wallet-header-btn wallet-btn disconnected';
+            walletBtn.disabled = false;
+
             console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]: État APRÈS modification:`);
-            console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Text content:`, walletBtn.textContent);
+            console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Text content:`, walletBtnText.textContent);
             console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Classes:`, walletBtn.className);
-            console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Style background:`, walletBtn.style.background);
-            console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Style color:`, walletBtn.style.color);
             console.log(`🎯 AUDIT FORENSIQUE [${timestamp}]:   - Disabled:`, walletBtn.disabled);
         } else {
             console.error(`🎯 AUDIT FORENSIQUE [${timestamp}]: BOUTON WALLET NON TROUVÉ !`);

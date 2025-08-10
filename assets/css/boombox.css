@@ -1351,7 +1351,7 @@ wcm-modal-close-button {
 }
 
 wcm-connecting-header::after {
-    content: "📱 Scannez avec Trust Wallet, MetaMask Mobile ou autre wallet";
+    content: "Scannez avec Trust Wallet, MetaMask Mobile ou autre wallet";
     display: block;
     color: var(--gaming-primary);
     font-size: 13px;

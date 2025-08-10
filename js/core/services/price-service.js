@@ -16,20 +16,7 @@
     }
   }
 
-  async function fetchJsonWithTimeout(url, timeoutMs) {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      const res = await fetch(url, { signal: controller.signal });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`API Error ${res.status}: ${text}`);
-      }
-      return await res.json();
-    } finally {
-      clearTimeout(id);
-    }
-  }
+  // Supprimé: fetch direct. Utiliser BoomboxAPI pour respecter l'architecture.
 
   const PriceService = {
     async fetchNativePrice(chainId) {
@@ -40,10 +27,12 @@
         const info = cm && cm.getCurrentChain && cm.getCurrentChain();
         if (info && info.nativeToken) token = info.nativeToken;
       } catch (_) {}
-      const url = `/api/v1/price/${chainId}/${token}`;
-      log('debug', 'Appel API prix natif', { url });
+      log('debug', 'Appel API prix natif', { chainId, token });
       try {
-        const data = await fetchJsonWithTimeout(url, 8000);
+        if (!window.BoomboxAPI || typeof window.BoomboxAPI.getTokenPrice !== 'function') {
+          throw new Error('ApiClient non initialisé');
+        }
+        const data = await window.BoomboxAPI.getTokenPrice(chainId, token);
         if (!data || typeof data.price !== 'number' || !isFinite(data.price)) {
           throw new Error('Données de prix invalides reçues de l\'API');
         }
