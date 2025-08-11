@@ -226,11 +226,19 @@
   display: flex; justify-content: space-between; align-items: center;
   background: var(--color-primary); border: 1px solid var(--color-border);
   border-radius: var(--radius-sm); padding: 8px; color: var(--text-primary);
+  cursor: pointer; transition: var(--transition-normal);
 }
 .swapv2-token-row-left { display: flex; flex-direction: column; gap: 4px; }
 .swapv2-token-row-right { color: var(--text-secondary); font-size: 12px; }
 .swapv2-token-symbol { font-weight: 600; }
 .swapv2-token-chain { font-size: 11px; color: var(--text-secondary); }
+
+/* Hover bleu + lueur pour les options de jeton */
+.swapv2-token-row:hover {
+  background: var(--gaming-primary);
+  border-color: var(--gaming-primary);
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.35);
+}
 
 /* Popover Infos */
 .swapv2-popover.hidden { display: none; }
