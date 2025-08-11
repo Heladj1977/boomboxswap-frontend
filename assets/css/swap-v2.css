@@ -195,6 +195,10 @@
   min-width: 0 !important;
   max-width: 90vw !important;
   box-sizing: border-box;
+  aspect-ratio: 1 / 1;              /* carré parfait */
+  height: auto;                      /* laisse l'aspect-ratio gérer la hauteur */
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
+  overflow: hidden;
 }
 .swapv2-modal-title { margin-bottom: 10px; font-weight: 700; }
 .swapv2-form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
