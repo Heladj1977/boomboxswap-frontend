@@ -91,6 +91,7 @@
   border-radius: var(--radius-sm);
   padding: 4px 6px;
   background: var(--bg-medium);
+  margin-top: 6px;
 }
 /* Aplatit les 3 lignes en une seule ligne de grille */
 .swapv2-info-row { display: contents; }
@@ -169,8 +170,8 @@
     "header  header"
     "from    to"
     "switch  switch"
-    "infos   infos"
-    "footer  footer";
+    "footer  footer"
+    "infos   infos";
   gap: 8px;
 }
 .swapv2-header { grid-area: header; }
@@ -197,8 +198,8 @@
       "from"
       "to"
       "switch"
-      "infos"
-      "footer";
+      "footer"
+      "infos";
   }
 }
 
