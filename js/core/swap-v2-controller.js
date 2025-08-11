@@ -79,6 +79,10 @@
         <div class="swapv2-amount-row">
           <input id="swapv2-to-amount" class="swapv2-input" type="number" step="any" min="0" inputmode="decimal" placeholder="0,00" aria-label="Montant cible (lecture seule par défaut)" />
         </div>
+        <div class="swapv2-subinfo">
+          <span class="swapv2-subinfo-label">Minimum reçu:</span>
+          <span class="swapv2-subinfo-value" id="swapv2-min-received">—</span>
+        </div>
       </div>
     `;
   }
@@ -89,10 +93,6 @@
           <div class="swapv2-info-label">Prix :</div>
           <div class="swapv2-info-value" id="swapv2-price">—</div>
           <button class="swapv2-btn swapv2-btn-ghost" id="swapv2-open-infos" type="button" aria-label="Plus d'informations">Infos</button>
-        </div>
-        <div class="swapv2-info-row">
-          <div class="swapv2-info-label">Montant minimum reçu :</div>
-          <div class="swapv2-info-value" id="swapv2-min-received">—</div>
         </div>
         <div class="swapv2-info-row">
           <div class="swapv2-info-label">Frais totaux :</div>
