@@ -11,9 +11,13 @@
   border-radius: var(--radius-sm);
   padding: 6px;
   display: inline-flex; align-items: center; justify-content: center;
+  transition: var(--transition-normal);
 }
 .swapv2-icon { display: block; }
-.swapv2-icon-img { display: block; filter: none; }
+.swapv2-icon-img { display: block; filter: none; transition: var(--transition-normal); }
+.swapv2-icon-btn:hover { filter: brightness(1.08); }
+.swapv2-icon-btn:hover .swapv2-icon-img { transform: scale(1.06); }
+.swapv2-icon-btn:active { transform: scale(0.96); }
 
 .swapv2-btn {
   background: var(--color-secondary);
