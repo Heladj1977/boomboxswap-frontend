@@ -120,6 +120,14 @@
 .swapv2-info-label { color: var(--text-secondary); font-size: 10px; white-space: nowrap; }
 .swapv2-info-value { color: var(--text-primary); font-size: 11px; }
 
+/* Bouton Infos compact */
+#swapv2-open-infos.swapv2-btn {
+  padding: 2px 6px;
+  font-size: 11px;
+  line-height: 1;
+  min-width: auto;
+}
+
 .swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 4px; }
 .swapv2-footer .swapv2-btn-primary {
   width: min(100%, 320px);
