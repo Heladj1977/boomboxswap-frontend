@@ -133,9 +133,9 @@
         deadlineMin: state.settings.deadlineMin,
         onSave: (vals) => {
           state.settings = Object.assign({}, state.settings, vals);
-          qs('#swapv2-min-received', root)?.textContent = '—';
-          qs('#swapv2-price', root)?.textContent = '—';
-          qs('#swapv2-fees', root)?.textContent = '—';
+          { const el = qs('#swapv2-min-received', root); if (el) el.textContent = '—'; }
+          { const el = qs('#swapv2-price', root); if (el) el.textContent = '—'; }
+          { const el = qs('#swapv2-fees', root); if (el) el.textContent = '—'; }
         }
       });
     });
@@ -259,9 +259,9 @@
         state.toToken = null;
         const toBtn = qs('#swapv2-to-token', root); if (toBtn) toBtn.textContent = 'Sélectionner';
       }
-      qs('#swapv2-price', root)?.textContent = '—';
-      qs('#swapv2-min-received', root)?.textContent = '—';
-      qs('#swapv2-fees', root)?.textContent = '—';
+      { const el = qs('#swapv2-price', root); if (el) el.textContent = '—'; }
+      { const el = qs('#swapv2-min-received', root); if (el) el.textContent = '—'; }
+      { const el = qs('#swapv2-fees', root); if (el) el.textContent = '—'; }
       updateCta(root);
     } catch (e) { log('warn', 'onChainChanged error', e); }
   }
