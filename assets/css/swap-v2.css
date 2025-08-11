@@ -134,7 +134,8 @@
   grid-column: 7;             /* colonne dédiée à droite */
   justify-self: end;          /* collé au bord droit de la zone infos */
   align-self: center;         /* centrage vertical dans la ligne */
-  top: 4px;                   /* léger décalage vers le bas */
+  top: 0;
+  transform: translateY(6px); /* décalage visuel vers le bas */
   margin-top: 0;
 }
 
