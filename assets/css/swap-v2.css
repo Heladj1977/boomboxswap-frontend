@@ -130,6 +130,11 @@
   font-size: 16px;
   color: var(--text-primary);
   transition: transform var(--transition-fast);
+  display: inline-block;            /* nécessaire pour un pivot propre */
+  width: 16px; height: 16px;        /* boîte carrée pour l'icône */
+  line-height: 16px; text-align: center;
+  transform-origin: 50% 50%;        /* rotation autour du centre */
+  will-change: transform;
 }
 
 /* Effet hover: bleu + lueur et rotation de l'icône */
