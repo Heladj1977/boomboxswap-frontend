@@ -105,7 +105,7 @@
 .swapv2-infos {
   /* Ultra-compact: une seule ligne (desktop) */
   display: grid;
-  grid-template-columns: auto auto 1fr auto auto; /* Prix | valeur | spacer | label frais | valeur */
+  grid-template-columns: auto auto 1fr auto auto 1fr auto; /* Prix|val | sp | Frais|val | sp | Infos */
   align-items: center;
   column-gap: 10px;
   row-gap: 0;
@@ -114,7 +114,7 @@
   padding: 4px 6px;
   background: var(--bg-medium);
   margin-top: 6px;
-  position: relative; /* permet de centrer "Infos" en absolu */
+  position: relative;
 }
 /* Aplatit les 3 lignes en une seule ligne de grille */
 .swapv2-info-row { display: contents; }
@@ -130,8 +130,9 @@
   width: auto;                /* colle au texte */
   display: inline-flex;       /* évite l'élargissement par défaut */
   align-items: center; justify-content: center;
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  z-index: 1;
+  position: static;
+  grid-column: 7;             /* colonne dédiée à droite */
+  justify-self: end;          /* collé au bord droit de la zone infos */
 }
 
 .swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 4px; }
