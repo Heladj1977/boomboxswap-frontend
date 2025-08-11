@@ -75,29 +75,32 @@
   font-size: 0; /* cache le texte, aria-label conserve l'accessibilité */
 }
 #swapv2-switch::before {
-  content: '⇅';
+  content: '↔';
   font-size: 16px;
   color: var(--text-primary);
 }
 
 .swapv2-infos {
-  display: flex; flex-direction: column; gap: 2px;
-  border: 1px dashed var(--color-border); border-radius: var(--radius-sm);
-  padding: 6px; background: var(--bg-medium);
-}
-.swapv2-info-row {
+  /* Ultra-compact: une seule ligne (desktop) */
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 6px; align-items: center;
-  line-height: 1.1;
+  grid-template-columns: auto auto auto auto auto auto 1fr auto;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 0;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  background: var(--bg-medium);
 }
-.swapv2-info-label { color: var(--text-secondary); font-size: 11px; }
+/* Aplatit les 3 lignes en une seule ligne de grille */
+.swapv2-info-row { display: contents; }
+.swapv2-info-label { color: var(--text-secondary); font-size: 11px; white-space: nowrap; }
 .swapv2-info-value { color: var(--text-primary); font-size: 11px; }
 
-.swapv2-footer { display: flex; justify-content: center; padding-top: 6px; }
+.swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 8px; }
 .swapv2-footer .swapv2-btn-primary {
-  width: 100%;
-  min-height: 40px;
+  width: min(100%, 320px);
+  min-height: 38px;
   font-size: 14px;
   padding: 10px 16px;
   border-radius: var(--radius-md);
@@ -143,7 +146,19 @@
 /* Responsive */
 @media (max-width: 768px) {
   .swapv2-token-btn { min-width: 100px; }
-  .swapv2-info-row { grid-template-columns: auto 1fr auto; }
+  /* Sur mobile, repasser en 2-3 lignes lisibles */
+  .swapv2-infos {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px;
+  }
+  .swapv2-info-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 6px;
+  }
+  .swapv2-footer .swapv2-btn-primary { width: 100%; }
 }
 
 /* === Palier 1: Layout 2 colonnes + compacité raisonnable (desktop) === */
