@@ -205,6 +205,20 @@
 .swapv2-form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .swapv2-label { font-size: 12px; color: var(--text-secondary); }
 .swapv2-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+.swapv2-modal-actions .swapv2-btn {
+  background: linear-gradient(135deg, var(--gaming-error) 0%, #ff3742 100%);
+  color: var(--text-primary);
+  border: 2px solid rgba(255, 71, 87, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 6px 12px;
+  font-weight: 600;
+}
+.swapv2-modal-actions .swapv2-btn:hover {
+  background: linear-gradient(135deg, #ff3742 0%, #ff2a37 100%);
+  border-color: rgba(255, 71, 87, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 71, 87, 0.25);
+}
 
 /* Token list */
 .swapv2-token-list { display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow: auto; }
