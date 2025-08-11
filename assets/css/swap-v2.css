@@ -61,8 +61,17 @@
   font-size: 14px;
 }
 
-.swapv2-quick { display: flex; gap: 6px; }
-.swapv2-quick.hidden { display: none; }
+.swapv2-quick {
+  display: flex; gap: 6px;
+  height: 26px;               /* réserve l'espace pour éviter les décalages */
+  align-items: center;
+  transition: opacity 120ms ease-in-out;
+}
+.swapv2-quick.hidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;       /* clics désactivés quand masqué */
+}
 .swapv2-to #swapv2-from-quick { display: none !important; }
 .swapv2-to #swapv2-from-max { display: none !important; }
 .swapv2-chip {
