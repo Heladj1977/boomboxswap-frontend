@@ -42,7 +42,10 @@
       <div class="swapv2-block swapv2-from">
         <div class="swapv2-row swapv2-row-top">
           <button class="swapv2-token-btn" id="swapv2-from-token" type="button" aria-label="Sélectionner le jeton source">${tokenLabel}</button>
-          <div class="swapv2-balance">Solde: <span id="swapv2-from-balance">${balance}</span></div>
+          <div class="swapv2-balance">
+            <div class="swapv2-balance-label">Solde:</div>
+            <div class="swapv2-balance-value" id="swapv2-from-balance">${balance}</div>
+          </div>
         </div>
         <div class="swapv2-amount-row">
           <input id="swapv2-from-amount" class="swapv2-input" type="number" step="any" min="0" inputmode="decimal" placeholder="0,00" aria-label="Montant à échanger (source)" />
@@ -68,7 +71,10 @@
       <div class="swapv2-block swapv2-to">
         <div class="swapv2-row swapv2-row-top">
           <button class="swapv2-token-btn" id="swapv2-to-token" type="button" aria-label="Sélectionner le jeton cible">${tokenLabel}</button>
-          <div class="swapv2-balance">Solde: <span id="swapv2-to-balance">—</span></div>
+          <div class="swapv2-balance">
+            <div class="swapv2-balance-label">Solde:</div>
+            <div class="swapv2-balance-value" id="swapv2-to-balance">—</div>
+          </div>
         </div>
         <div class="swapv2-amount-row">
           <input id="swapv2-to-amount" class="swapv2-input" type="number" step="any" min="0" inputmode="decimal" placeholder="0,00" aria-label="Montant cible (lecture seule par défaut)" />
