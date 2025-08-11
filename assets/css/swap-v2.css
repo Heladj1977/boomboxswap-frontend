@@ -57,6 +57,8 @@
 
 .swapv2-quick { display: flex; gap: 6px; }
 .swapv2-quick.hidden { display: none; }
+.swapv2-to #swapv2-from-quick { display: none !important; }
+.swapv2-to #swapv2-from-max { display: none !important; }
 .swapv2-chip {
   background: transparent;
   border: 1px solid var(--gaming-primary);

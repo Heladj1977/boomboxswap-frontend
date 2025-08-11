@@ -39,7 +39,7 @@
     const balance = '—';
     const tokenLabel = state.fromToken || 'Sélectionner';
     return `
-      <div class="swapv2-block">
+      <div class="swapv2-block swapv2-from">
         <div class="swapv2-row swapv2-row-top">
           <button class="swapv2-token-btn" id="swapv2-from-token" type="button" aria-label="Sélectionner le jeton source">${tokenLabel}</button>
           <div class="swapv2-balance">Solde: <span id="swapv2-from-balance">${balance}</span></div>
@@ -66,7 +66,7 @@
   function renderToBlock() {
     const tokenLabel = state.toToken || 'Sélectionner';
     return `
-      <div class="swapv2-block">
+      <div class="swapv2-block swapv2-to">
         <div class="swapv2-row swapv2-row-top">
           <button class="swapv2-token-btn" id="swapv2-to-token" type="button" aria-label="Sélectionner le jeton cible">${tokenLabel}</button>
           <div class="swapv2-balance">Solde: <span id="swapv2-to-balance">—</span></div>
