@@ -114,6 +114,7 @@
   padding: 4px 6px;
   background: var(--bg-medium);
   margin-top: 6px;
+  position: relative; /* permet de centrer "Infos" en absolu */
 }
 /* Aplatit les 3 lignes en une seule ligne de grille */
 .swapv2-info-row { display: contents; }
@@ -129,8 +130,9 @@
   width: auto;                /* colle au texte */
   display: inline-flex;       /* évite l'élargissement par défaut */
   align-items: center; justify-content: center;
-  grid-column: 4;             /* force la colonne auto dédiée, laisse la 1fr comme espace */
-  justify-self: start;        /* pas d'étirement horizontal */
+  grid-column: auto;
+  justify-self: center;
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
 }
 
 .swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 4px; }
