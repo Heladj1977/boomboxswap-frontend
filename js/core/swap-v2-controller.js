@@ -66,8 +66,10 @@
         <button id="swapv2-switch" class="swapv2-btn" type="button" aria-label="Inverser les jetons">
           <svg class="swapv2-switch-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
             <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 8h12M12 5l4 3-4 3"/>
-              <path d="M20 16H8M12 19l-4-3 4-3"/>
+              <!-- Flèche haut (droite) raccourcie pour laisser un léger espace au centre -->
+              <path d="M4 8h7M11 5l4 3-4 3"/>
+              <!-- Flèche bas (gauche) raccourcie pour laisser un léger espace au centre -->
+              <path d="M20 16H13M13 19l-4-3 4-3"/>
             </g>
           </svg>
         </button>
