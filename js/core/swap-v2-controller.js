@@ -283,6 +283,14 @@
     try { console.log('[SWAP_V2] root found?', !!root); } catch (_) {}
     if (root) { try { console.log('[SWAP_V2] root hidden before unhide:', root.hidden); } catch (_) {} }
     if (!root) { log('warn', 'Point de montage #swapv2-root introuvable'); return false; }
+    // Masquer le header et le contenu V1 de la Card 6 pour éviter le mélange (non destructif)
+    try {
+      const card = root.closest('.smart-card');
+      const header = card && card.querySelector('.card-header');
+      const v1Content = card && card.querySelector('.swap-content');
+      if (header) header.style.display = 'none';
+      if (v1Content) v1Content.style.display = 'none';
+    } catch (_) {}
     updateCta(root);
     console.log('[SWAP_V2] init() complete');
     try {
