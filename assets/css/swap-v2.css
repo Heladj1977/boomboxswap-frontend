@@ -130,9 +130,8 @@
   width: auto;                /* colle au texte */
   display: inline-flex;       /* évite l'élargissement par défaut */
   align-items: center; justify-content: center;
-  grid-column: 3;             /* se place dans la colonne espace (centrée) */
-  justify-self: center;       /* centrage horizontal sans bouger les autres colonnes */
-  position: static;           /* pas d'absolute pour ne pas chevaucher */
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 .swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 4px; }
