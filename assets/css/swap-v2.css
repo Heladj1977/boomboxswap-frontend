@@ -130,11 +130,12 @@
   width: auto;                /* colle au texte */
   display: inline-flex;       /* évite l'élargissement par défaut */
   align-items: center; justify-content: center;
-  position: static;
+  position: relative;
   grid-column: 7;             /* colonne dédiée à droite */
   justify-self: end;          /* collé au bord droit de la zone infos */
   align-self: center;         /* centrage vertical dans la ligne */
-  margin-top: 4px;            /* décalage vers le bas x2 */
+  top: 4px;                   /* léger décalage vers le bas */
+  margin-top: 0;
 }
 
 .swapv2-footer { display: flex; justify-content: center; padding-top: 2px; margin-bottom: 2px; }
