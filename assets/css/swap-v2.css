@@ -125,16 +125,13 @@
   background: var(--bg-medium);
   transition: var(--transition-normal);
 }
-#swapv2-switch::before {
-  content: '↔';
-  font-size: 16px;
-  color: var(--text-primary);
-  transition: transform var(--transition-fast);
-  display: inline-block;            /* nécessaire pour un pivot propre */
-  width: 16px; height: 16px;        /* boîte carrée pour l'icône */
-  line-height: 16px; text-align: center;
-  transform-origin: 50% 50%;        /* rotation autour du centre */
-  will-change: transform;
+/* Icône SVG centrée pour le switch */
+.swapv2-switch-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  transform-origin: 50% 50%;
+  transition: transform 600ms ease-in-out;
 }
 
 /* Effet hover: bleu + lueur et rotation de l'icône */
@@ -143,8 +140,7 @@
   border-color: var(--gaming-primary);
   box-shadow: 0 0 10px rgba(74, 144, 226, 0.35);
 }
-#swapv2-switch::before { transform: rotate(0deg); }
-#swapv2-switch:hover::before { transform: rotate(180deg); }
+#swapv2-switch:hover .swapv2-switch-icon { transform: rotate(180deg); }
 
 .swapv2-infos {
   /* Ultra-compact: une seule ligne (desktop) */
