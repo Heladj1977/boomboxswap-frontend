@@ -113,7 +113,7 @@
   border-radius: var(--radius-sm);
   padding: 4px 6px;
   background: var(--bg-medium);
-  margin-top: 6px;
+  margin-top: 2px; /* léger décalage vers le haut */
   position: relative;
 }
 /* Aplatit les 3 lignes en une seule ligne de grille */
@@ -135,7 +135,7 @@
   justify-self: end;          /* collé au bord droit de la zone infos */
 }
 
-.swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 4px; }
+.swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 2px; }
 .swapv2-footer .swapv2-btn-primary {
   width: min(100%, 320px);
   min-height: 36px;
