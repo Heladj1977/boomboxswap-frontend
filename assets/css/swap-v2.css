@@ -122,7 +122,7 @@
 
 /* Bouton Infos compact */
 #swapv2-open-infos.swapv2-btn {
-  padding: 4px 8px;           /* revient à une taille lisible mais compacte */
+  padding: 2px 6px;           /* bouton plus étroit uniquement */
   font-size: 12px;
   line-height: 1;
   min-width: auto;
