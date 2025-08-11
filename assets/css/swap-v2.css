@@ -105,7 +105,7 @@
 .swapv2-infos {
   /* Ultra-compact: une seule ligne (desktop) */
   display: grid;
-  grid-template-columns: auto auto 1fr auto auto auto; /* Prix | valeur | spacer | Infos | label frais | valeur */
+  grid-template-columns: auto auto 1fr auto auto; /* Prix | valeur | spacer | label frais | valeur */
   align-items: center;
   column-gap: 10px;
   row-gap: 0;
@@ -130,9 +130,9 @@
   width: auto;                /* colle au texte */
   display: inline-flex;       /* évite l'élargissement par défaut */
   align-items: center; justify-content: center;
-  grid-column: auto;
-  justify-self: center;
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  grid-column: 3;             /* se place dans la colonne espace (centrée) */
+  justify-self: center;       /* centrage horizontal sans bouger les autres colonnes */
+  position: static;           /* pas d'absolute pour ne pas chevaucher */
 }
 
 .swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 4px; }
