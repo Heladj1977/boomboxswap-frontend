@@ -177,8 +177,8 @@
   gap: 8px;
 }
 .swapv2-header { grid-area: header; }
-.swapv2-block:nth-of-type(1) { grid-area: from; }
-.swapv2-block:nth-of-type(2) { grid-area: to; }
+.swapv2-from { grid-area: from; }
+.swapv2-to { grid-area: to; }
 .swapv2-switch-row { grid-area: switch; }
 .swapv2-infos { grid-area: infos; }
 .swapv2-footer { grid-area: footer; }
