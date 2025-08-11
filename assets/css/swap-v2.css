@@ -13,6 +13,7 @@
   display: inline-flex; align-items: center; justify-content: center;
 }
 .swapv2-icon { display: block; }
+.swapv2-icon-img { display: block; filter: none; }
 
 .swapv2-btn {
   background: var(--color-secondary);

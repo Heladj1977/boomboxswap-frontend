@@ -32,9 +32,7 @@
       <div class="swapv2-header">
         <div class="swapv2-title">SWAP</div>
         <button class="swapv2-icon-btn" type="button" id="swapv2-open-settings" aria-label="Ouvrir les paramètres">
-          <svg class="swapv2-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm9.2 3.1-.9-.5.1-1a1 1 0 0 0-.3-.8l-.7-.7a1 1 0 0 0-.8-.3l-1 .1-.5-.9a1 1 0 0 0-.7-.5l-1-.3a1 1 0 0 0-.9.2l-.8.6-.9-.3a1 1 0 0 0-.8 0l-.9.3-.8-.6a1 1 0 0 0-.9-.2l-1 .3a1 1 0 0 0-.7.5l-.5.9-1-.1a1 1 0 0 0-.8.3l-.7.7a1 1 0 0 0-.3.8l.1 1-.9.5a1 1 0 0 0-.5.7l-.3 1a1 1 0 0 0 .2.9l.6.8-.3.9a1 1 0 0 0 0 .8l.3.9-.6.8a1 1 0 0 0-.2.9l.3 1a1 1 0 0 0 .5.7l.9.5-.1 1a1 1 0 0 0 .3.8l.7.7a1 1 0 0 0 .8.3l1-.1.5.9a1 1 0 0 0 .7.5l1 .3a1 1 0 0 0 .9-.2l.8-.6.9.3a1 1 0 0 0 .8 0l.9-.3.8.6a1 1 0 0 0 .9.2l1-.3a1 1 0 0 0 .7-.5l.5-.9 1 .1a1 1 0 0 0 .8-.3l.7-.7a1 1 0 0 0 .3-.8l-.1-1 .9-.5a1 1 0 0 0 .5-.7l.3-1a1 1 0 0 0-.2-.9l-.6-.8.3-.9a1 1 0 0 0 0-.8l-.3-.9.6-.8a1 1 0 0 0 .2-.9l-.3-1a1 1 0 0 0-.5-.7Z"/>
-          </svg>
+          <img class="swapv2-icon-img" src="assets/images/icons/settings.svg" alt="Paramètres" width="16" height="16"/>
         </button>
       </div>
     `;
