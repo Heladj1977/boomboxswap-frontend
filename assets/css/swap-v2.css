@@ -122,10 +122,13 @@
 
 /* Bouton Infos compact */
 #swapv2-open-infos.swapv2-btn {
-  padding: 2px 6px;           /* bouton plus étroit uniquement */
+  padding: 2px 4px;           /* bouton plus étroit uniquement */
   font-size: 12px;
   line-height: 1;
-  min-width: auto;
+  min-width: 0;               /* aucune largeur minimale imposée */
+  width: auto;                /* colle au texte */
+  display: inline-flex;       /* évite l'élargissement par défaut */
+  align-items: center; justify-content: center;
 }
 
 .swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 4px; }
