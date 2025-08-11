@@ -179,6 +179,14 @@
   margin-top: 0;
 }
 
+/* Hover bleu + lueur pour le bouton Infos */
+#swapv2-open-infos.swapv2-btn:hover {
+  background: var(--gaming-primary);
+  color: var(--text-primary);
+  border-color: var(--gaming-primary);
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.35);
+}
+
 .swapv2-footer { display: flex; justify-content: center; padding-top: 2px; margin-bottom: 2px; }
 .swapv2-footer .swapv2-btn-primary {
   width: min(100%, 320px);
