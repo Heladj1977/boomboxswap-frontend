@@ -1,0 +1,190 @@
+/* BOOMBOXSWAP - Styles Swap V2 (Lot 1) - Préfixe swapv2- */
+.swapv2-container { display: flex; flex-direction: column; gap: 8px; }
+.swapv2-header { display: flex; align-items: center; justify-content: space-between; }
+.swapv2-title { font-weight: 700; letter-spacing: 0.03em; }
+
+.swapv2-btn {
+  background: var(--color-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+.swapv2-btn:hover { filter: brightness(1.05); }
+.swapv2-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.swapv2-btn-primary { background: var(--gaming-primary); border-color: var(--color-border); }
+.swapv2-btn-small { padding: 4px 8px; font-size: 11px; }
+.swapv2-btn-ghost { background: transparent; }
+
+.swapv2-block {
+  display: flex; flex-direction: column; gap: 6px;
+  background: var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+}
+.swapv2-row { display: flex; align-items: center; justify-content: space-between; }
+.swapv2-row-top { gap: 8px; }
+
+.swapv2-token-btn {
+  background: var(--bg-medium);
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 12px;
+  min-width: 120px;
+  text-align: left;
+}
+.swapv2-balance { color: var(--text-secondary); font-size: 12px; }
+
+.swapv2-amount-row {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 8px; align-items: center;
+}
+.swapv2-input {
+  width: 100%;
+  background: var(--color-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+.swapv2-quick { display: flex; gap: 6px; }
+.swapv2-quick.hidden { display: none; }
+.swapv2-chip {
+  background: transparent;
+  border: 1px solid var(--gaming-primary);
+  color: var(--gaming-primary);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px; font-size: 11px; cursor: pointer;
+}
+
+.swapv2-switch-row { display: flex; justify-content: center; }
+/* Bouton Inverser circulaire, icône flèches directionnelles */
+#swapv2-switch {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0; /* cache le texte, aria-label conserve l'accessibilité */
+}
+#swapv2-switch::before {
+  content: '⇅';
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.swapv2-infos {
+  display: flex; flex-direction: column; gap: 2px;
+  border: 1px dashed var(--color-border); border-radius: var(--radius-sm);
+  padding: 6px; background: var(--bg-medium);
+}
+.swapv2-info-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 6px; align-items: center;
+  line-height: 1.1;
+}
+.swapv2-info-label { color: var(--text-secondary); font-size: 11px; }
+.swapv2-info-value { color: var(--text-primary); font-size: 11px; }
+
+.swapv2-footer { display: flex; justify-content: center; padding-top: 6px; }
+.swapv2-footer .swapv2-btn-primary {
+  width: 100%;
+  min-height: 40px;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+}
+
+/* Modales */
+.swapv2-modal.hidden { display: none; }
+.swapv2-modal { position: fixed; inset: 0; z-index: var(--z-modal); }
+.swapv2-modal-backdrop { position: absolute; inset: 0; background: var(--bg-dark); }
+.swapv2-modal-content {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  background: var(--bg-medium); border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg); padding: 14px; min-width: 280px; max-width: 92vw;
+}
+.swapv2-modal-title { margin-bottom: 10px; font-weight: 700; }
+.swapv2-form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.swapv2-label { font-size: 12px; color: var(--text-secondary); }
+.swapv2-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+
+/* Token list */
+.swapv2-token-list { display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow: auto; }
+.swapv2-token-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--color-primary); border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm); padding: 8px; color: var(--text-primary);
+}
+.swapv2-token-row-left { display: flex; flex-direction: column; gap: 4px; }
+.swapv2-token-row-right { color: var(--text-secondary); font-size: 12px; }
+.swapv2-token-symbol { font-weight: 600; }
+.swapv2-token-chain { font-size: 11px; color: var(--text-secondary); }
+
+/* Popover Infos */
+.swapv2-popover.hidden { display: none; }
+.swapv2-popover {
+  position: fixed; z-index: var(--z-dropdown);
+  background: var(--bg-medium); border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); padding: 10px; min-width: 240px; max-width: 70vw;
+}
+.swapv2-pop-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+.swapv2-pop-label { color: var(--text-secondary); font-size: 12px; }
+.swapv2-pop-value { color: var(--text-primary); font-size: 12px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .swapv2-token-btn { min-width: 100px; }
+  .swapv2-info-row { grid-template-columns: auto 1fr auto; }
+}
+
+/* === Palier 1: Layout 2 colonnes + compacité raisonnable (desktop) === */
+.swapv2-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "header  header"
+    "from    to"
+    "switch  switch"
+    "infos   infos"
+    "footer  footer";
+  gap: 8px;
+}
+.swapv2-header { grid-area: header; }
+.swapv2-block:nth-of-type(1) { grid-area: from; }
+.swapv2-block:nth-of-type(2) { grid-area: to; }
+.swapv2-switch-row { grid-area: switch; }
+.swapv2-infos { grid-area: infos; }
+.swapv2-footer { grid-area: footer; }
+
+/* Compacité modérée */
+.swapv2-block { padding: 6px; }
+.swapv2-input { padding: 6px 8px; font-size: 13px; }
+.swapv2-btn { padding: 5px 8px; font-size: 12px; }
+.swapv2-token-btn { min-width: 110px; }
+.swapv2-info-row { gap: 6px; }
+.swapv2-balance { font-size: 11px; }
+
+/* Mobile: 1 colonne */
+@media (max-width: 768px) {
+  .swapv2-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "from"
+      "to"
+      "switch"
+      "infos"
+      "footer";
+  }
+}
+
+
