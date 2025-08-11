@@ -188,6 +188,14 @@
   box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(74,144,226,0.1), inset 0 1px 0 rgba(255,255,255,0.08);
   animation: modalFadeIn 0.3s ease;
 }
+
+/* Spécificité renforcée pour garantir la largeur exacte du modal Paramètres */
+#swapv2-settings-modal .swapv2-modal-content {
+  width: 300px !important;
+  min-width: 0 !important;
+  max-width: 90vw !important;
+  box-sizing: border-box;
+}
 .swapv2-modal-title { margin-bottom: 10px; font-weight: 700; }
 .swapv2-form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .swapv2-label { font-size: 12px; color: var(--text-secondary); }
