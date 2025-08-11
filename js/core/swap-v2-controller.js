@@ -46,7 +46,6 @@
         </div>
         <div class="swapv2-amount-row">
           <input id="swapv2-from-amount" class="swapv2-input" type="number" step="any" min="0" inputmode="decimal" placeholder="0,00" aria-label="Montant à échanger (source)" />
-          <button id="swapv2-from-max" class="swapv2-btn swapv2-btn-small" type="button">MAX</button>
         </div>
         <div id="swapv2-from-quick" class="swapv2-quick hidden">
           <button data-q="25" class="swapv2-chip" type="button">25%</button>
@@ -192,13 +191,7 @@
       });
     });
 
-    qs('#swapv2-from-max', root)?.addEventListener('click', () => {
-      fromInput.value = '100';
-      state.fromAmount = '100';
-      state.toAmount = '100';
-      if (toInput) toInput.value = '100';
-      updateCta(root);
-    });
+    // Bouton MAX persistant supprimé: uniquement les chips 25/50/100%
 
     toInput?.addEventListener('input', () => {
       if (!state.allowReverseInput) return;
