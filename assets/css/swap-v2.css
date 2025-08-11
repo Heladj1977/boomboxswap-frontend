@@ -64,6 +64,7 @@
   min-width: 100px;
   text-align: center;
   white-space: nowrap;
+  transition: var(--transition-normal);
 }
 .swapv2-balance {
   display: flex; flex-direction: column; align-items: flex-end;
@@ -272,6 +273,14 @@
 .swapv2-input { padding: 6px 8px; font-size: 13px; }
 .swapv2-btn { padding: 5px 8px; font-size: 12px; }
 .swapv2-token-btn { min-width: 92px; }
+
+/* Effet survol des sélecteurs de jeton */
+.swapv2-token-btn:hover {
+  background: var(--gaming-primary);
+  color: var(--text-primary);
+  border-color: var(--gaming-primary);
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.35);
+}
 .swapv2-info-row { gap: 6px; }
 .swapv2-balance { font-size: 11px; }
 
