@@ -3,6 +3,17 @@
 .swapv2-header { display: flex; align-items: center; justify-content: space-between; }
 .swapv2-title { font-weight: 700; letter-spacing: 0.03em; }
 
+/* Bouton icône Paramètres (style cohérent bleu) */
+.swapv2-icon-btn {
+  background: var(--bg-medium);
+  color: var(--gaming-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.swapv2-icon { display: block; }
+
 .swapv2-btn {
   background: var(--color-secondary);
   color: var(--text-primary);
