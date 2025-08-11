@@ -111,19 +111,19 @@
   row-gap: 0;
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-sm);
-  padding: 3px 6px;
+  padding: 4px 6px;
   background: var(--bg-medium);
   margin-top: 6px;
 }
 /* Aplatit les 3 lignes en une seule ligne de grille */
 .swapv2-info-row { display: contents; }
-.swapv2-info-label { color: var(--text-secondary); font-size: 10px; white-space: nowrap; }
+.swapv2-info-label { color: var(--text-secondary); font-size: 11px; white-space: nowrap; }
 .swapv2-info-value { color: var(--text-primary); font-size: 11px; }
 
 /* Bouton Infos compact */
 #swapv2-open-infos.swapv2-btn {
-  padding: 2px 6px;
-  font-size: 11px;
+  padding: 4px 8px;           /* revient à une taille lisible mais compacte */
+  font-size: 12px;
   line-height: 1;
   min-width: auto;
 }
