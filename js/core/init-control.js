@@ -106,6 +106,7 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
         } catch (_) { return null; }
         return Promise.resolve()
           .then(() => loadCss('assets/css/swap-v2.css'))
+          .then(() => loadScript('js/core/swap-v2-adapters.js'))
           .then(() => loadScript('js/components/swap-v2-modal-settings.js'))
           .then(() => loadScript('js/components/swap-v2-modal-token-select.js'))
           .then(() => loadScript('js/components/swap-v2-popover-infos.js'))

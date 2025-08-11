@@ -17,7 +17,10 @@
     fromAmount: '',
     toAmount: '',
     allowReverseInput: true,
-    settings: Object.assign({}, defaultSettings)
+    settings: Object.assign({}, defaultSettings),
+    walletConnected: false,
+    address: null,
+    quoteTimer: null
   };
 
   function getChainKey() {
@@ -133,13 +136,130 @@
   }
 
   function computeCtaDisabled() {
-    const walletConnected = !!(window.BOOMSWAP_CURRENT_ADDRESS || window.BOOMB_SOLANA_PUBLIC_KEY);
+    const walletConnected = !!state.walletConnected;
     return (!walletConnected || !state.fromToken || !state.toToken || !state.fromAmount || Number(state.fromAmount) <= 0 || state.fromToken === state.toToken);
   }
   function updateCta(root) {
     const btn = qs('#swapv2-cta', root);
     if (!btn) return;
     btn.disabled = computeCtaDisabled();
+  }
+
+  function savePrefs() {
+    try {
+      const data = {
+        slippagePct: state.settings.slippagePct,
+        deadlineMin: state.settings.deadlineMin,
+        fromToken: state.fromToken,
+        toToken: state.toToken,
+        chainKey: state.chainKey
+      };
+      localStorage.setItem('swapv2_prefs', JSON.stringify(data));
+    } catch (_) {}
+  }
+
+  function loadPrefsForChain() {
+    try {
+      const raw = localStorage.getItem('swapv2_prefs');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (!data) return;
+      if (typeof data.slippagePct === 'number') {
+        state.settings.slippagePct = data.slippagePct;
+      }
+      if (typeof data.deadlineMin === 'number') {
+        state.settings.deadlineMin = data.deadlineMin;
+      }
+      const wl = getWhitelistForChain(state.chainKey);
+      if (data.chainKey === state.chainKey) {
+        if (data.fromToken && wl.includes(data.fromToken)) state.fromToken = data.fromToken;
+        if (data.toToken && wl.includes(data.toToken)) state.toToken = data.toToken;
+      }
+    } catch (_) {}
+  }
+
+  function setText(sel, value, root) {
+    const el = qs(sel, root);
+    if (el) el.textContent = value;
+  }
+
+  function formatDisplayNumber(s) {
+    try {
+      const n = Number(s);
+      if (!isFinite(n)) return '—';
+      return n.toFixed(4);
+    } catch (_) { return '—'; }
+  }
+
+  async function refreshBalances(root) {
+    try {
+      if (!state.walletConnected || !state.address) return;
+      const symbols = [];
+      if (state.fromToken) symbols.push(state.fromToken);
+      if (state.toToken && state.toToken !== state.fromToken) symbols.push(state.toToken);
+      if (symbols.length === 0) return;
+      const ad = window.SwapV2Adapters;
+      if (!ad || typeof ad.getBalances !== 'function') return;
+      const r = await ad.getBalances({
+        chainKey: state.chainKey,
+        address: state.address,
+        symbols
+      });
+      if (!r) return;
+      if (state.fromToken && r[state.fromToken]) {
+        setText('#swapv2-from-balance', formatDisplayNumber(r[state.fromToken]), root);
+      }
+      if (state.toToken && r[state.toToken]) {
+        setText('#swapv2-to-balance', formatDisplayNumber(r[state.toToken]), root);
+      }
+    } catch (e) {
+      log('warn', 'refreshBalances failed', e);
+    }
+  }
+
+  async function runQuote(root) {
+    try {
+      const ad = window.SwapV2Adapters;
+      if (!ad || typeof ad.quote !== 'function') {
+        setText('#swapv2-price', '—', root);
+        setText('#swapv2-min-received', '—', root);
+        setText('#swapv2-fees', '—', root);
+        return;
+      }
+      if (!state.fromToken || !state.toToken) return;
+      const amt = Number(state.fromAmount || '0');
+      if (!(amt > 0)) {
+        setText('#swapv2-price', '—', root);
+        setText('#swapv2-min-received', '—', root);
+        setText('#swapv2-fees', '—', root);
+        return;
+      }
+      const q = await ad.quote({
+        chainKey: state.chainKey,
+        from: state.fromToken,
+        to: state.toToken,
+        amount: amt,
+        slippagePct: state.settings.slippagePct
+      });
+      const price = q && q.price != null ? String(q.price) : '—';
+      const min = q && q.minReceived != null ? String(q.minReceived) : '—';
+      const fees = q && q.fees != null ? String(q.fees) : '—';
+      setText('#swapv2-price', price === '—' ? '—' : formatDisplayNumber(price), root);
+      setText('#swapv2-min-received', min === '—' ? '—' : formatDisplayNumber(min), root);
+      setText('#swapv2-fees', fees, root);
+    } catch (e) {
+      log('warn', 'quote failed', e);
+      setText('#swapv2-price', '—', root);
+      setText('#swapv2-min-received', '—', root);
+      setText('#swapv2-fees', '—', root);
+    }
+  }
+
+  function scheduleQuote(root) {
+    try {
+      if (state.quoteTimer) { clearTimeout(state.quoteTimer); state.quoteTimer = null; }
+      state.quoteTimer = setTimeout(() => { runQuote(root); }, 250);
+    } catch (_) {}
   }
 
   function wireInteractions(root) {
@@ -149,9 +269,10 @@
         deadlineMin: state.settings.deadlineMin,
         onSave: (vals) => {
           state.settings = Object.assign({}, state.settings, vals);
-          { const el = qs('#swapv2-min-received', root); if (el) el.textContent = '—'; }
-          { const el = qs('#swapv2-price', root); if (el) el.textContent = '—'; }
-          { const el = qs('#swapv2-fees', root); if (el) el.textContent = '—'; }
+          setText('#swapv2-min-received', '—', root);
+          setText('#swapv2-price', '—', root);
+          setText('#swapv2-fees', '—', root);
+          savePrefs();
         }
       });
     });
@@ -162,8 +283,11 @@
         side: 'from', chainKey: state.chainKey, tokens: list,
         onSelect: (symbol) => {
           state.fromToken = symbol;
-          qs('#swapv2-from-token', root).textContent = symbol;
+          setText('#swapv2-from-token', symbol, root);
           updateCta(root);
+          savePrefs();
+          refreshBalances(root);
+          scheduleQuote(root);
         }
       });
     });
@@ -174,8 +298,11 @@
         side: 'to', chainKey: state.chainKey, tokens: list,
         onSelect: (symbol) => {
           state.toToken = symbol;
-          qs('#swapv2-to-token', root).textContent = symbol;
+          setText('#swapv2-to-token', symbol, root);
           updateCta(root);
+          savePrefs();
+          refreshBalances(root);
+          scheduleQuote(root);
         }
       });
     });
@@ -193,6 +320,7 @@
         if (toInput) toInput.value = state.toAmount;
       }
       updateCta(root);
+      scheduleQuote(root);
     });
 
     qsa('#swapv2-from-quick .swapv2-chip', root).forEach(btn => {
@@ -205,6 +333,7 @@
         state.toAmount = state.fromAmount;
         if (toInput) toInput.value = state.toAmount;
         updateCta(root);
+        scheduleQuote(root);
       });
     });
 
@@ -216,6 +345,9 @@
       state.fromAmount = state.toAmount;
       if (fromInput) fromInput.value = state.fromAmount;
       updateCta(root);
+      savePrefs();
+      refreshBalances(root);
+      scheduleQuote(root);
     });
 
     qs('#swapv2-switch', root)?.addEventListener('click', () => {
@@ -273,6 +405,8 @@
       { const el = qs('#swapv2-min-received', root); if (el) el.textContent = '—'; }
       { const el = qs('#swapv2-fees', root); if (el) el.textContent = '—'; }
       updateCta(root);
+      savePrefs();
+      refreshBalances(root);
     } catch (e) { log('warn', 'onChainChanged error', e); }
   }
 
@@ -283,6 +417,65 @@
     root.innerHTML = render();
     wireInteractions(root);
     return root;
+  }
+
+  function attachWalletListeners(root) {
+    try {
+      const evBus = window.BoomboxEvents;
+      const evs = evBus && evBus.EVENTS;
+      const walletEvents = [
+        evs && evs.WALLET_CHANGED,
+        evs && evs.WALLET_CONNECTED,
+        evs && evs.WALLET_DISCONNECTED
+      ].filter(Boolean);
+      if (evBus && typeof evBus.on === 'function' && walletEvents.length) {
+        walletEvents.forEach(evt => evBus.on(evt, () => {
+          try { updateWalletState(root); refreshBalances(root); scheduleQuote(root); updateCta(root); } catch (_) {}
+        }));
+        return;
+      }
+    } catch (_) {}
+    // Polling doux si aucun événement dispo
+    try {
+      let lastAddr = state.address || null;
+      const iv = setInterval(() => {
+        try {
+          const ws = getWalletStateSafe();
+          const changed = ws.address !== lastAddr || ws.connected !== state.walletConnected || ws.chainKey !== state.chainKey;
+          if (changed) {
+            state.walletConnected = ws.connected;
+            state.address = ws.address || null;
+            state.chainKey = ws.chainKey;
+            lastAddr = state.address;
+            onChainChanged();
+            refreshBalances(root);
+            scheduleQuote(root);
+            updateCta(root);
+          }
+          if (state.walletConnected) { clearInterval(iv); }
+        } catch (_) {}
+      }, 5000);
+    } catch (_) {}
+  }
+
+  function getWalletStateSafe() {
+    try {
+      const ad = window.SwapV2Adapters;
+      if (ad && typeof ad.getWalletState === 'function') {
+        return ad.getWalletState();
+      }
+    } catch (_) {}
+    return { connected: false, chainKey: getChainKey() };
+  }
+
+  function updateWalletState(root) {
+    try {
+      const st = getWalletStateSafe();
+      state.walletConnected = !!st.connected;
+      state.address = st.address || null;
+      state.chainKey = st.chainKey || getChainKey();
+    } catch (_) {}
+    updateCta(root);
   }
 
   function init() {
@@ -297,7 +490,14 @@
       if (header) header.style.display = 'none';
       if (v1Content) v1Content.style.display = 'none';
     } catch (_) {}
+    updateWalletState(root);
+    loadPrefsForChain();
+    // Re-appliquer labels tokens depuis prefs si présents
+    if (state.fromToken) setText('#swapv2-from-token', state.fromToken, root);
+    if (state.toToken) setText('#swapv2-to-token', state.toToken, root);
     updateCta(root);
+    refreshBalances(root);
+    scheduleQuote(root);
     try {
       const evBus = window.BoomboxEvents;
       const chainChangedEv = evBus?.EVENTS?.CHAIN_CHANGED;
@@ -310,6 +510,7 @@
     } catch (e) {
       console.warn('[SWAP_V2] chain listener attach failed', e);
     }
+    attachWalletListeners(root);
     log('info', 'Swap V2 initialisé');
     return true;
   }
