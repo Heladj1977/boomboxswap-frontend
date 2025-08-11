@@ -63,7 +63,7 @@
 
 .swapv2-quick {
   display: flex; gap: 6px;
-  height: 26px;               /* réserve l'espace pour éviter les décalages */
+  height: 22px;               /* réserve l'espace plus compacte */
   align-items: center;
   transition: opacity 120ms ease-in-out;
 }
@@ -106,21 +106,21 @@
   row-gap: 0;
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-sm);
-  padding: 4px 6px;
+  padding: 3px 6px;
   background: var(--bg-medium);
   margin-top: 6px;
 }
 /* Aplatit les 3 lignes en une seule ligne de grille */
 .swapv2-info-row { display: contents; }
-.swapv2-info-label { color: var(--text-secondary); font-size: 11px; white-space: nowrap; }
+.swapv2-info-label { color: var(--text-secondary); font-size: 10px; white-space: nowrap; }
 .swapv2-info-value { color: var(--text-primary); font-size: 11px; }
 
-.swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 8px; }
+.swapv2-footer { display: flex; justify-content: center; padding-top: 6px; margin-bottom: 4px; }
 .swapv2-footer .swapv2-btn-primary {
   width: min(100%, 320px);
-  min-height: 38px;
+  min-height: 36px;
   font-size: 14px;
-  padding: 10px 16px;
+  padding: 8px 16px;
   border-radius: var(--radius-md);
 }
 
@@ -191,7 +191,7 @@
     "switch  switch"
     "footer  footer"
     "infos   infos";
-  gap: 8px;
+  gap: 6px;
 }
 .swapv2-header { grid-area: header; }
 .swapv2-from { grid-area: from; }
@@ -201,7 +201,7 @@
 .swapv2-footer { grid-area: footer; }
 
 /* Compacité modérée */
-.swapv2-block { padding: 6px; }
+.swapv2-block { padding: 5px; }
 .swapv2-input { padding: 6px 8px; font-size: 13px; }
 .swapv2-btn { padding: 5px 8px; font-size: 12px; }
 .swapv2-token-btn { min-width: 92px; }
