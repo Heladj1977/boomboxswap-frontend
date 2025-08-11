@@ -198,6 +198,7 @@
 #swapv2-settings-modal #swapv2-settings-save.swapv2-btn:hover {
   filter: brightness(1.05);
   box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+  transform: translateY(-2px);
 }
 
 /* Bouton Annuler (rouge) dans la modale Paramètres */
