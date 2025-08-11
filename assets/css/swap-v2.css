@@ -164,6 +164,15 @@
   .swapv2-footer .swapv2-btn-primary { width: 100%; }
 }
 
+/* Positionner visuellement le bouton d'inversion entre FROM et TO (desktop) */
+@media (min-width: 769px) {
+  .swapv2-switch-row {
+    position: relative;
+    margin-top: -18px; /* remonte le bouton vers l'espace entre les deux blocs */
+    z-index: 2;
+  }
+}
+
 /* === Palier 1: Layout 2 colonnes + compacité raisonnable (desktop) === */
 .swapv2-container {
   display: grid;
