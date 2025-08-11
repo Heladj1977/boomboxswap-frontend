@@ -68,4 +68,62 @@ window.waitForDOM = function(callback) {
     }
 };
 
-console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé'); 
+console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
+
+// Loader conditionnel Swap V2 (Lot 0–1) — sans impacter l'existant
+;(function () {
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      try {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => resolve(true);
+        s.onerror = (e) => reject(e);
+        document.body.appendChild(s);
+      } catch (e) { reject(e); }
+    });
+  }
+  function loadCss(href) {
+    return new Promise((resolve, reject) => {
+      try {
+        const l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = href;
+        l.onload = () => resolve(true);
+        l.onerror = (e) => reject(e);
+        document.head.appendChild(l);
+      } catch (e) { reject(e); }
+    });
+  }
+
+  function start() {
+    loadScript('js/core/feature-flags.js')
+      .then(() => {
+        try {
+          if (!window.BoomboxFeatureFlags?.isEnabled('swap_v2_enabled')) {
+            return null;
+          }
+        } catch (_) { return null; }
+        return Promise.resolve()
+          .then(() => loadCss('assets/css/swap-v2.css'))
+          .then(() => loadScript('js/components/swap-v2-modal-settings.js'))
+          .then(() => loadScript('js/components/swap-v2-modal-token-select.js'))
+          .then(() => loadScript('js/components/swap-v2-popover-infos.js'))
+          .then(() => loadScript('js/core/swap-v2-controller.js'))
+          .then(() => { try { window.SwapV2Controller?.init?.(); } catch (_) {} });
+      })
+      .catch((e) => {
+        try { console.warn('[SWAP_V2] Chargement conditionnel échoué', e); } catch (_) {}
+      });
+  }
+
+  try {
+    if (typeof window.waitForDOM === 'function') {
+      window.waitForDOM(start);
+    } else if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start, { once: true });
+    } else {
+      start();
+    }
+  } catch (_) { /* silence */ }
+})();

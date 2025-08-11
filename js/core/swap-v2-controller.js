@@ -279,7 +279,6 @@
   function mountRootIfNeeded() {
     const root = document.getElementById('swapv2-root');
     if (!root) return null;
-    try { console.log('[SWAP_V2] unhide root'); } catch (_) {}
     root.hidden = false;
     root.innerHTML = render();
     wireInteractions(root);
@@ -287,11 +286,8 @@
   }
 
   function init() {
-    try { console.log('[SWAP_V2] init()'); } catch (_) {}
     state.chainKey = getChainKey();
     const root = mountRootIfNeeded();
-    try { console.log('[SWAP_V2] root found?', !!root); } catch (_) {}
-    if (root) { try { console.log('[SWAP_V2] root hidden before unhide:', root.hidden); } catch (_) {} }
     if (!root) { log('warn', 'Point de montage #swapv2-root introuvable'); return false; }
     // Masquer le header et le contenu V1 de la Card 6 pour éviter le mélange (non destructif)
     try {
@@ -302,15 +298,14 @@
       if (v1Content) v1Content.style.display = 'none';
     } catch (_) {}
     updateCta(root);
-    console.log('[SWAP_V2] init() complete');
     try {
       const evBus = window.BoomboxEvents;
       const chainChangedEv = evBus?.EVENTS?.CHAIN_CHANGED;
       if (evBus?.on && chainChangedEv) {
         evBus.on(chainChangedEv, onChainChanged);
-        console.log('[SWAP_V2] chain listener attached');
+        
       } else {
-        console.log('[SWAP_V2] chain listener skipped (BoomboxEvents or EVENTS undefined)');
+        
       }
     } catch (e) {
       console.warn('[SWAP_V2] chain listener attach failed', e);
