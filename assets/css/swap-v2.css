@@ -191,7 +191,7 @@
 
 /* Spécificité renforcée pour garantir la largeur exacte du modal Paramètres */
 #swapv2-settings-modal .swapv2-modal-content {
-  width: 300px !important;
+  width: 260px !important;
   min-width: 0 !important;
   max-width: 90vw !important;
   box-sizing: border-box;
