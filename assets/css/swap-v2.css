@@ -133,6 +133,7 @@
   position: static;
   grid-column: 7;             /* colonne dédiée à droite */
   justify-self: end;          /* collé au bord droit de la zone infos */
+  align-self: center;         /* centrage vertical dans la ligne */
 }
 
 .swapv2-footer { display: flex; justify-content: center; padding-top: 2px; margin-bottom: 2px; }
