@@ -143,14 +143,8 @@
   border-color: var(--gaming-primary);
   box-shadow: 0 0 10px rgba(74, 144, 226, 0.35);
 }
-#swapv2-switch:hover::before {
-  animation: swapv2-rotate 600ms ease-in-out;
-}
-
-@keyframes swapv2-rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(180deg); }
-}
+#swapv2-switch::before { transform: rotate(0deg); }
+#swapv2-switch:hover::before { transform: rotate(180deg); }
 
 .swapv2-infos {
   /* Ultra-compact: une seule ligne (desktop) */
