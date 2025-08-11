@@ -34,10 +34,11 @@
   color: var(--text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  padding: 6px 8px;
+  padding: 6px 6px;
   font-size: 12px;
   min-width: 100px;
-  text-align: left;
+  text-align: center;
+  white-space: nowrap;
 }
 .swapv2-balance { color: var(--text-secondary); font-size: 12px; }
 
@@ -189,7 +190,7 @@
 .swapv2-block { padding: 6px; }
 .swapv2-input { padding: 6px 8px; font-size: 13px; }
 .swapv2-btn { padding: 5px 8px; font-size: 12px; }
-.swapv2-token-btn { min-width: 96px; }
+.swapv2-token-btn { min-width: 92px; }
 .swapv2-info-row { gap: 6px; }
 .swapv2-balance { font-size: 11px; }
 
