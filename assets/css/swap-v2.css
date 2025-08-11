@@ -187,6 +187,19 @@
   box-shadow: 0 0 8px rgba(74, 144, 226, 0.35);
 }
 
+/* Bouton Enregistrer (bleu) dans la modale Paramètres */
+#swapv2-settings-modal #swapv2-settings-save.swapv2-btn {
+  background: var(--gaming-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--gaming-primary);
+  padding: 6px 12px;
+  font-weight: 600;
+}
+#swapv2-settings-modal #swapv2-settings-save.swapv2-btn:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+}
+
 .swapv2-footer { display: flex; justify-content: center; padding-top: 2px; margin-bottom: 2px; }
 .swapv2-footer .swapv2-btn-primary {
   width: min(100%, 320px);
@@ -227,7 +240,8 @@
 .swapv2-form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .swapv2-label { font-size: 12px; color: var(--text-secondary); }
 .swapv2-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
-.swapv2-modal-actions .swapv2-btn {
+/* Style rouge uniquement pour la modale de sélection de jeton (Annuler) */
+#swapv2-token-modal .swapv2-modal-actions .swapv2-btn {
   background: linear-gradient(135deg, var(--gaming-error) 0%, #ff3742 100%);
   color: var(--text-primary);
   border: 2px solid rgba(255, 71, 87, 0.3);
@@ -235,7 +249,7 @@
   padding: 6px 12px;
   font-weight: 600;
 }
-.swapv2-modal-actions .swapv2-btn:hover {
+#swapv2-token-modal .swapv2-modal-actions .swapv2-btn:hover {
   background: linear-gradient(135deg, #ff3742 0%, #ff2a37 100%);
   border-color: rgba(255, 71, 87, 0.4);
   transform: translateY(-2px);
