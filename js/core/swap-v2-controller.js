@@ -506,13 +506,9 @@
       const root = document.getElementById('swapv2-root');
       if (!root || root.hidden) return;
       log('log', '[CHAIN] changed to', state.chainKey);
-      if (!isChainSupported(state.chainKey)) {
-        setStatusMessage(root, 'Chaîne non supportée');
-        setInteractiveEnabled(root, false);
-      } else {
-        setStatusMessage(root, '');
-        setInteractiveEnabled(root, true);
-      }
+      // UI toujours interactive; pas de message persistant
+      setStatusMessage(root, '');
+      setInteractiveEnabled(root, true);
       const wl = getWhitelistForChain(state.chainKey);
       if (state.fromToken && !wl.includes(state.fromToken)) {
         state.fromToken = null;
@@ -557,18 +553,11 @@
           try {
             updateWalletState(root);
             log('log', '[WALLET] event');
-            const st = getWalletStateSafe();
-            if (!st.connected) {
-              setStatusMessage(root, 'Connectez votre wallet pour utiliser le swap');
-              setInteractiveEnabled(root, false);
-            } else if (!isChainSupported(st.chainKey)) {
-              setStatusMessage(root, 'Chaîne non supportée');
-              setInteractiveEnabled(root, false);
-            } else {
-              setStatusMessage(root, '');
-              setInteractiveEnabled(root, true);
-              applyChainDefaultsIfNeeded(root);
-            }
+            // UI toujours interactive; pas de message persistant
+            setStatusMessage(root, '');
+            setInteractiveEnabled(root, true);
+            const st = getWallet();
+            if (st.connected) { applyChainDefaultsIfNeeded(root); }
             refreshBalances(root);
             scheduleQuote(root);
             updateCta(root);
@@ -704,13 +693,9 @@
       if (v1Content) v1Content.style.display = 'none';
     } catch (_) {}
     updateWalletState(root);
-    if (!state.walletConnected) {
-      setStatusMessage(root, 'Connectez votre wallet pour utiliser le swap');
-      setInteractiveEnabled(root, false);
-    } else {
-      setStatusMessage(root, '');
-      setInteractiveEnabled(root, true);
-    }
+    // UI toujours interactive; pas de message persistant
+    setStatusMessage(root, '');
+    setInteractiveEnabled(root, true);
     applyChainDefaultsIfNeeded(root);
     loadPrefsForChain();
     // Re-appliquer labels tokens depuis prefs si présents
