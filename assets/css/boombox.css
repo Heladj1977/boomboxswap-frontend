@@ -701,64 +701,21 @@ body {
 }
 
 /* CARTE DE SWAP PARFAITE */
-.swap-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    flex: 1;
-    overflow: hidden;
-}
+/* Legacy Card 6 swap-content supprimée (V1) */
 
-.swap-triangle {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 0.75rem;
-    flex: 1;
-    justify-content: center;
-}
+/* Legacy Card 6 triangle supprimé (V1) */
 
-.swap-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.4rem;
-    background: var(--color-primary);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
-}
+/* Legacy Card 6 arrow supprimé (V1) */
 
-.swap-from, .swap-to {
-    color: var(--text-secondary);
-    font-weight: 600;
-    font-size: 0.8rem;
-}
+/* Legacy Card 6 labels supprimés (V1) */
 
-.swap-arrow-icon {
-    color: var(--gaming-primary);
-    font-weight: bold;
-    font-size: 1rem;
-}
+/* Legacy Card 6 arrow icon supprimé (V1) */
 
-.swap-slippage {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.4rem;
-    border-top: 1px solid var(--color-border);
-}
+/* Legacy Card 6 slippage supprimé (V1) */
 
-.slippage-label {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-}
+/* Legacy Card 6 slippage label supprimé (V1) */
 
-.slippage-value {
-    color: var(--gaming-success);
-    font-weight: 600;
-    font-size: 0.8rem;
-}
+/* Legacy Card 6 slippage value supprimé (V1) */
 
 /* CONTRÔLES MUSICAUX PARFAITS */
 .music-container {
@@ -1197,20 +1154,9 @@ body.modal-open {
     margin-top: 0;
 }
 
-.bottom-row .swap-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+/* Legacy Card 6 bottom-row swap-content supprimé (V1) */
 
-.bottom-row .swap-triangle {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.6rem;
-}
+/* Legacy Card 6 bottom-row triangle supprimé (V1) */
 
 /* ============================================================================
    STYLES WALLETCONNECT OPTIMISÉS
