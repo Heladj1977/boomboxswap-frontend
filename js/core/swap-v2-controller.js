@@ -30,7 +30,8 @@
     walletConnected: false,
     address: null,
     quoteTimer: null,
-    lastPriceSource: 'none'
+    lastPriceSource: 'none',
+    walletWatchTimer: null
   };
 
   const SUPPORTED = {
@@ -91,8 +92,41 @@
     return '';
   }
 
+  function mapEvmChainIdToKey(chainId) {
+    try {
+      const id = typeof chainId === 'string' && chainId.startsWith('0x')
+        ? parseInt(chainId, 16)
+        : Number(chainId);
+      if (id === 56) return 'bsc';
+      if (id === 42161 || id === 421614) return 'arbitrum';
+    } catch (_) {}
+    return null;
+  }
+
   function getChainKey() {
-    try { return window.BoomboxChainManager?.getCurrentChainId?.() || 'bsc'; } catch (_) { return 'bsc'; }
+    try {
+      // Priorité: BoomboxChainManager si dispo
+      const cm = window.BoomboxChainManager;
+      const cmKey = cm?.getCurrentChainId?.();
+      if (cmKey && typeof cmKey === 'string') return cmKey;
+      // EVM: window.ethereum.chainId
+      const evmId = window.ethereum && (window.ethereum.chainId || window.ethereum.networkVersion);
+      const key = mapEvmChainIdToKey(evmId);
+      if (key) return key;
+      // Solana
+      if (window.BOOMB_SOLANA_PUBLIC_KEY) return 'solana';
+    } catch (_) {}
+    return 'bsc';
+  }
+
+  function getWallet() {
+    try {
+      const evmAddr = window.BOOMSWAP_CURRENT_ADDRESS || window.BOOMSWAP_EVM_ADDRESS || null;
+      const solAddr = window.BOOMB_SOLANA_PUBLIC_KEY || null;
+      const connected = !!(evmAddr || solAddr);
+      const chainId = (window.ethereum && (window.ethereum.chainId || window.ethereum.networkVersion)) || null;
+      return { connected, address: evmAddr || solAddr, chainId };
+    } catch (_) { return { connected: false, address: null, chainId: null }; }
   }
   function getWhitelistForChain(chainKey) { return TOKENS_BY_CHAIN[chainKey] || TOKENS_BY_CHAIN['bsc']; }
   function qs(sel, root) { return (root || document).querySelector(sel); }
@@ -205,7 +239,8 @@
 
   function computeCtaDisabled() {
     const walletConnected = !!state.walletConnected;
-    return (!walletConnected || !state.fromToken || !state.toToken || !state.fromAmount || Number(state.fromAmount) <= 0 || state.fromToken === state.toToken);
+    if (!walletConnected) return true;
+    return (!state.fromToken || !state.toToken || !state.fromAmount || Number(state.fromAmount) <= 0 || state.fromToken === state.toToken);
   }
   function updateCta(root) {
     const btn = qs('#swapv2-cta', root);
@@ -339,6 +374,7 @@
 
   function wireInteractions(root) {
     qs('#swapv2-open-settings', root)?.addEventListener('click', () => {
+      if (!state.walletConnected) { window.showNotification?.('Connectez votre wallet', 'warning'); return; }
       window.SwapV2SettingsModal?.show({
         slippagePct: state.settings.slippagePct,
         deadlineMin: state.settings.deadlineMin,
@@ -353,6 +389,7 @@
     });
 
     qs('#swapv2-from-token', root)?.addEventListener('click', () => {
+      if (!state.walletConnected) { window.showNotification?.('Connectez votre wallet', 'warning'); return; }
       const list = getWhitelistForChain(state.chainKey);
       window.SwapV2TokenSelectModal?.show({
         side: 'from', chainKey: state.chainKey, tokens: list,
@@ -368,6 +405,7 @@
     });
 
     qs('#swapv2-to-token', root)?.addEventListener('click', () => {
+      if (!state.walletConnected) { window.showNotification?.('Connectez votre wallet', 'warning'); return; }
       const list = getWhitelistForChain(state.chainKey).filter(t => t !== state.fromToken);
       window.SwapV2TokenSelectModal?.show({
         side: 'to', chainKey: state.chainKey, tokens: list,
@@ -395,11 +433,12 @@
         if (toInput) toInput.value = state.toAmount;
       }
       updateCta(root);
-      scheduleQuote(root);
+      if (state.walletConnected) scheduleQuote(root);
     });
 
     qsa('#swapv2-from-quick .swapv2-chip', root).forEach(btn => {
       btn.addEventListener('click', () => {
+        if (!state.walletConnected) { window.showNotification?.('Connectez votre wallet', 'warning'); return; }
         const q = btn.getAttribute('data-q');
         if (q === '25') fromInput.value = '25';
         else if (q === '50') fromInput.value = '50';
@@ -408,7 +447,7 @@
         state.toAmount = state.fromAmount;
         if (toInput) toInput.value = state.toAmount;
         updateCta(root);
-        scheduleQuote(root);
+        if (state.walletConnected) scheduleQuote(root);
       });
     });
 
@@ -422,7 +461,7 @@
       updateCta(root);
       savePrefs();
       refreshBalances(root);
-      scheduleQuote(root);
+      if (state.walletConnected) scheduleQuote(root);
     });
 
     qs('#swapv2-switch', root)?.addEventListener('click', () => {
@@ -451,8 +490,7 @@
       if (computeCtaDisabled()) {
         if (!state.fromToken || !state.toToken) { window.showNotification?.('Veuillez sélectionner un jeton', 'warning'); return; }
         if (!state.fromAmount || Number(state.fromAmount) <= 0) { window.showNotification?.('Veuillez saisir un montant', 'warning'); return; }
-        const walletConnected = !!(window.BOOMSWAP_CURRENT_ADDRESS || window.BOOMB_SOLANA_PUBLIC_KEY);
-        if (!walletConnected) { window.showNotification?.('Wallet non connecté', 'warning'); return; }
+        if (!state.walletConnected) { window.showNotification?.('Wallet non connecté', 'warning'); return; }
       }
       if (state.fromToken && state.toToken && state.fromToken !== state.toToken) {
         window.showNotification?.('Approuver (statique) puis Swap (statique)', 'info');
@@ -544,12 +582,12 @@
       let lastAddr = state.address || null;
       const iv = setInterval(() => {
         try {
-          const ws = getWalletStateSafe();
-          const changed = ws.address !== lastAddr || ws.connected !== state.walletConnected || ws.chainKey !== state.chainKey;
+          const ws = getWallet();
+          const changed = ws.address !== lastAddr || ws.connected !== state.walletConnected || getChainKey() !== state.chainKey;
           if (changed) {
-            state.walletConnected = ws.connected;
+            state.walletConnected = !!ws.connected;
             state.address = ws.address || null;
-            state.chainKey = ws.chainKey;
+            state.chainKey = getChainKey();
             lastAddr = state.address;
             onChainChanged();
             refreshBalances(root);
@@ -560,6 +598,16 @@
         } catch (_) {}
       }, 5000);
     } catch (_) {}
+
+    // Écouteurs EVM directs + événements custom globaux
+    try {
+      if (window.ethereum && typeof window.ethereum.on === 'function') {
+        window.ethereum.on('accountsChanged', () => { try { onChainChanged(); } catch (_) {} });
+        window.ethereum.on('chainChanged', () => { try { onChainChanged(); } catch (_) {} });
+      }
+    } catch (_) {}
+    try { window.addEventListener('boombox:wallet:connected', () => { try { onChainChanged(); } catch (_) {} }); } catch (_) {}
+    try { window.addEventListener('boombox:wallet:disconnected', () => { try { onChainChanged(); } catch (_) {} }); } catch (_) {}
   }
 
   function getWalletStateSafe() {
@@ -598,10 +646,10 @@
 
   function updateWalletState(root) {
     try {
-      const st = getWalletStateSafe();
+      const st = getWallet();
       state.walletConnected = !!st.connected;
       state.address = st.address || null;
-      state.chainKey = st.chainKey || getChainKey();
+      state.chainKey = getChainKey();
     } catch (_) {}
     updateCta(root);
   }
