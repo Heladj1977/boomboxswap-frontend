@@ -122,13 +122,11 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
           return null;
         }
 
-        // Affichage anticipé du conteneur Swap V2 avec skeleton
+        // Affichage immédiat: rendre le conteneur visible sans skeleton
         try {
           const root = document.getElementById('swapv2-root');
           if (root) {
             root.removeAttribute('hidden');
-            root.setAttribute('data-skeleton', 'true');
-            root.setAttribute('aria-busy', 'true');
           }
         } catch (e) { try { console.error('[SWAP_V2] root early show error', e); } catch (_) {} }
 

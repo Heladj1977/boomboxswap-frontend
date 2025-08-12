@@ -511,15 +511,6 @@
       console.warn('[SWAP_V2] chain listener attach failed', e);
     }
     attachWalletListeners(root);
-    // Finaliser le skeleton: marquer prêt et aria-busy=false
-    try {
-      const rootFinal = document.getElementById('swapv2-root');
-      if (rootFinal) {
-        rootFinal.removeAttribute('data-skeleton');
-        rootFinal.classList.add('is-ready');
-        rootFinal.setAttribute('aria-busy', 'false');
-      }
-    } catch (e) { console.error('[SWAP_V2] skeleton finalize error', e); }
     log('info', 'Swap V2 initialisé');
     return true;
   }
