@@ -122,7 +122,15 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
           return null;
         }
 
-        try { console.log('[SWAP_V2] Prehide stays active'); } catch (_) {}
+        // Affichage anticipé du conteneur Swap V2 avec skeleton
+        try {
+          const root = document.getElementById('swapv2-root');
+          if (root) {
+            root.removeAttribute('hidden');
+            root.setAttribute('data-skeleton', 'true');
+            root.setAttribute('aria-busy', 'true');
+          }
+        } catch (e) { try { console.error('[SWAP_V2] root early show error', e); } catch (_) {} }
 
         return Promise.resolve()
           .then(() => loadCss('assets/css/swap-v2.css'))
