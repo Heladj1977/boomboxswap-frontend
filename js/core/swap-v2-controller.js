@@ -87,6 +87,9 @@
     if (!isChainSupported(state.chainKey)) return 'Chaîne non supportée';
     if (!state.fromToken) return 'Sélectionner un jeton source';
     if (!state.toToken) return 'Sélectionner un jeton cible';
+    const wl = getWhitelistForChain(state.chainKey) || [];
+    if (state.fromToken && !wl.includes(state.fromToken)) return 'Token source non supporté';
+    if (state.toToken && !wl.includes(state.toToken)) return 'Token cible non supporté';
     if (state.fromToken === state.toToken) return 'Sélectionner deux jetons différents';
     const amt = Number(state.fromAmount || '0');
     if (!(amt > 0)) return 'Saisir un montant';
@@ -160,7 +163,7 @@
         return state.tokenList;
       }
       // 2) JSON local si disponible
-      const url = `assets/tokens/tokens-${chainKey}.json`;
+      const url = `assets/tokens/${chainKey}.tokens.json`;
       try {
         const res = await fetch(url, { cache: 'no-cache' });
         if (res && res.ok) {
