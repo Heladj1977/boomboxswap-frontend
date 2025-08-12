@@ -107,20 +107,7 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
           v2Enabled = false;
         }
         try { console.log(`[SWAP_V2] Flag check: ${v2Enabled}`); } catch (_) {}
-        if (!v2Enabled) {
-          try {
-            const prehideEl = document.getElementById('swapv2-prehide');
-            if (prehideEl) {
-              prehideEl.remove();
-              try {
-                console.log('[SWAP_V2] Flag false → Card 6 legacy affichée');
-              } catch (_) {}
-            }
-          } catch (e) {
-            try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {}
-          }
-          return null;
-        }
+        if (!v2Enabled) { return null; }
 
         // Affichage immédiat: rendre le conteneur visible sans skeleton
         try {
@@ -130,24 +117,15 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
           }
         } catch (e) { try { console.error('[SWAP_V2] root early show error', e); } catch (_) {} }
 
-        return Promise.resolve()
-          .then(() => loadCss('assets/css/swap-v2.css'))
-          .then(() => loadScript('js/core/swap-v2-adapters.js'))
-          .then(() => { try { console.log('[SWAP_V2] Adapter loaded'); } catch (_) {} })
-          .then(() => loadScript('js/components/swap-v2-modal-settings.js'))
-          .then(() => loadScript('js/components/swap-v2-modal-token-select.js'))
-          .then(() => loadScript('js/components/swap-v2-popover-infos.js'))
+        return Promise.all([
+            loadCss('assets/css/swap-v2.css'),
+            loadScript('js/core/swap-v2-adapters.js'),
+            loadScript('js/components/swap-v2-modal-settings.js'),
+            loadScript('js/components/swap-v2-modal-token-select.js'),
+            loadScript('js/components/swap-v2-popover-infos.js')
+          ])
           .then(() => loadScript('js/core/swap-v2-controller.js'))
-          .then(() => {
-            try { console.log('[SWAP_V2] Controller init start'); } catch (_) {}
-            try {
-              const maybe = window.SwapV2Controller?.init?.();
-              return Promise.resolve(maybe);
-            } catch (e) {
-              try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {}
-            }
-          })
-          .then(() => { try { console.log('[SWAP_V2] Controller init complete'); } catch (_) {} });
+          .then(() => { try { window.SwapV2Controller?.init?.(); } catch (_) {} });
       })
       .catch((e) => {
         try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {}

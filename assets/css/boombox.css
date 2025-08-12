@@ -1158,6 +1158,18 @@ body.modal-open {
 
 /* Legacy Card 6 bottom-row triangle supprimé (V1) */
 
+/* Swap V2 placeholder minimal pour affichage instantané */
+#swapv2-root { min-height: 170px; }
+.swapv2-placeholder { display: grid; gap: 12px; }
+.swapv2-row { display: grid; gap: 6px; }
+.swapv2-label { font-size: 12px; opacity: .75; }
+.swapv2-fake-input {
+  height: 44px; border-radius: 12px;
+  border: 1px solid #2a2a2a;
+  background: #101010;
+}
+#swapv2-cta[disabled] { opacity: .6; cursor: not-allowed; }
+
 /* ============================================================================
    STYLES WALLETCONNECT OPTIMISÉS
    ============================================================================ */

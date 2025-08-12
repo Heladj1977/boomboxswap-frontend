@@ -414,8 +414,11 @@
     const root = document.getElementById('swapv2-root');
     if (!root) return null;
     root.hidden = false;
-    root.innerHTML = render();
+    if (!root.hasChildNodes()) {
+      root.innerHTML = render();
+    }
     wireInteractions(root);
+    if (typeof updateCta === 'function') { try { updateCta(root); } catch (_) {} }
     return root;
   }
 
