@@ -99,22 +99,52 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
   function start() {
     loadScript('js/core/feature-flags.js')
       .then(() => {
+        let v2Enabled = false;
         try {
-          if (!window.BoomboxFeatureFlags?.isEnabled('swap_v2_enabled')) {
-            return null;
+          v2Enabled =
+            window.BoomboxFeatureFlags?.isEnabled('swap_v2_enabled') === true;
+        } catch (_) {
+          v2Enabled = false;
+        }
+        try { console.log(`[SWAP_V2] Flag check: ${v2Enabled}`); } catch (_) {}
+        if (!v2Enabled) {
+          try {
+            const prehideEl = document.getElementById('swapv2-prehide');
+            if (prehideEl) {
+              prehideEl.remove();
+              try {
+                console.log('[SWAP_V2] Flag false → Card 6 legacy affichée');
+              } catch (_) {}
+            }
+          } catch (e) {
+            try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {}
           }
-        } catch (_) { return null; }
+          return null;
+        }
+
+        try { console.log('[SWAP_V2] Prehide stays active'); } catch (_) {}
+
         return Promise.resolve()
           .then(() => loadCss('assets/css/swap-v2.css'))
           .then(() => loadScript('js/core/swap-v2-adapters.js'))
+          .then(() => { try { console.log('[SWAP_V2] Adapter loaded'); } catch (_) {} })
           .then(() => loadScript('js/components/swap-v2-modal-settings.js'))
           .then(() => loadScript('js/components/swap-v2-modal-token-select.js'))
           .then(() => loadScript('js/components/swap-v2-popover-infos.js'))
           .then(() => loadScript('js/core/swap-v2-controller.js'))
-          .then(() => { try { window.SwapV2Controller?.init?.(); } catch (_) {} });
+          .then(() => {
+            try { console.log('[SWAP_V2] Controller init start'); } catch (_) {}
+            try {
+              const maybe = window.SwapV2Controller?.init?.();
+              return Promise.resolve(maybe);
+            } catch (e) {
+              try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {}
+            }
+          })
+          .then(() => { try { console.log('[SWAP_V2] Controller init complete'); } catch (_) {} });
       })
       .catch((e) => {
-        try { console.warn('[SWAP_V2] Chargement conditionnel échoué', e); } catch (_) {}
+        try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {}
       });
   }
 
