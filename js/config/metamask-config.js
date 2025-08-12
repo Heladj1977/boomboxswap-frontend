@@ -184,6 +184,16 @@ async function connectMetaMaskRobust() {
             
             currentConnectionState = CONNECTION_STATES.CONNECTED;
             updateWalletUI('connected', address);
+            try {
+                const root = document.getElementById('swapv2-root');
+                if (root && window.SwapV2Controller &&
+                    typeof window.SwapV2Controller.resyncWallet === 'function') {
+                    console.log('[SWAP_V2][EVENT] V1->V2 resync (connect)');
+                    window.SwapV2Controller.resyncWallet(root);
+                }
+            } catch (e) {
+                console.warn('[SWAP_V2] resync error after connect', e);
+            }
             try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
             
             // Configurer les event listeners APRÈS connexion réussie
@@ -404,6 +414,14 @@ function setupMetaMaskEvents(provider) {
                 window.BoomboxApp.onWalletConnected({});
             }
         } catch (_) {}
+        try {
+            const root = document.getElementById('swapv2-root');
+            if (root && window.SwapV2Controller &&
+                typeof window.SwapV2Controller.resyncWallet === 'function') {
+                console.log('[SWAP_V2][EVENT] V1->V2 resync (connect)');
+                window.SwapV2Controller.resyncWallet(root);
+            }
+        } catch (_) {}
     });
 
     // Écouter changements d'account
@@ -445,6 +463,16 @@ function setupMetaMaskEvents(provider) {
                     window.BoomboxApp.onWalletConnected({ balances, positions });
                 }
                 try { updateWalletUI('connected', address); } catch (_) {}
+                try {
+                    const root = document.getElementById('swapv2-root');
+                    if (root && window.SwapV2Controller &&
+                        typeof window.SwapV2Controller.resyncWallet === 'function') {
+                        console.log(
+                            '[SWAP_V2][EVENT] V1->V2 resync (accountsChanged)'
+                        );
+                        await window.SwapV2Controller.resyncWallet(root);
+                    }
+                } catch (_) {}
                 try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
             } catch (e) {
                 console.error('Erreur récupération balances:', e);
@@ -474,6 +502,14 @@ function setupMetaMaskEvents(provider) {
                 window.BoomboxChainManager.syncFromWallet(newChainId);
             }
         } catch (_) {}
+        try {
+            const root = document.getElementById('swapv2-root');
+            if (root && window.SwapV2Controller &&
+                typeof window.SwapV2Controller.resyncWallet === 'function') {
+                console.log('[SWAP_V2][EVENT] V1->V2 resync (chainChanged)');
+                window.SwapV2Controller.resyncWallet(root);
+            }
+        } catch (_) {}
     });
     
     // Écouter déconnexion
@@ -484,6 +520,14 @@ function setupMetaMaskEvents(provider) {
         }
         try { window.BOOMSWAP_EVM_ADDRESS = null; } catch (_) {}
         try { if (typeof window.BOOMB_APPLY_WALLET_HEADER === 'function') window.BOOMB_APPLY_WALLET_HEADER(); } catch (_) {}
+        try {
+            const root = document.getElementById('swapv2-root');
+            if (root && window.SwapV2Controller &&
+                typeof window.SwapV2Controller.resyncWallet === 'function') {
+                console.log('[SWAP_V2][EVENT] V1->V2 resync (disconnect)');
+                window.SwapV2Controller.resyncWallet(root);
+            }
+        } catch (_) {}
     });
     
     console.log('Events MetaMask configures');

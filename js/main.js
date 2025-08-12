@@ -1442,6 +1442,15 @@ class BoomboxApp {
         } catch (_) {}
 
         // Source unique (AAA) : statut wallet géré par main.js uniquement
+        // Pont V1 -> V2 : resynchroniser immédiatement Swap V2
+        try {
+            const root = document.getElementById('swapv2-root');
+            if (root && window.SwapV2Controller &&
+                typeof window.SwapV2Controller.resyncWallet === 'function') {
+                console.log('[SWAP_V2][EVENT] V1->V2 resync (connect via main.js)');
+                await window.SwapV2Controller.resyncWallet(root);
+            }
+        } catch (_) {}
         
         // Afficher le nom du réseau
         const networkName = this.getNetworkName(chainId);
