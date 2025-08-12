@@ -2,7 +2,16 @@
 (function () {
   try {
   const NS = 'SWAP_V2';
-  function log(level, msg, data) { (console[level] || console.log).call(console, `[${NS}] ${msg}`, data || ''); }
+  // Helpers de debug
+  function log(level, msg, data) {
+    (console[level] || console.log).call(
+      console,
+      `[${NS}][DBG]`,
+      msg,
+      data || ''
+    );
+  }
+  const err = (...a) => console.error(`[${NS}][ERR]`, ...a);
 
   const TOKENS_BY_CHAIN = {
     bsc: ['BNB', 'USDT', 'USDC', 'CAKE'],
@@ -482,9 +491,31 @@
   }
 
   function init() {
+    // Assertions et debug préliminaires
+    log('log', 'init start');
+    if (!document.getElementById('swapv2-root')) {
+      return err('root missing');
+    }
+    if (!window.SwapV2Adapters) {
+      return err('adapters missing');
+    }
+
     state.chainKey = getChainKey();
     const root = mountRootIfNeeded();
     if (!root) { log('warn', 'Point de montage #swapv2-root introuvable'); return false; }
+    // Vérification des sélecteurs requis
+    try {
+      const reqSelectors = [
+        '#swapv2-from-token',
+        '#swapv2-to-token',
+        '#swapv2-from-amount',
+        '#swapv2-to-amount',
+        '#swapv2-cta'
+      ];
+      for (const s of reqSelectors) {
+        if (!root.querySelector(s)) { err('missing selector', s); }
+      }
+    } catch (_) { /* noop */ }
     // Masquer le header et le contenu V1 de la Card 6 pour éviter le mélange (non destructif)
     try {
       const card = root.closest('.smart-card');
@@ -501,6 +532,20 @@
     updateCta(root);
     refreshBalances(root);
     scheduleQuote(root);
+    // Log tailles de listes et bloque CTA si listes vides
+    try {
+      const fromSel = root.querySelector('#swapv2-from-token');
+      const toSel = root.querySelector('#swapv2-to-token');
+      const wl = getWhitelistForChain(state.chainKey) || [];
+      const fromCount = (fromSel && fromSel.options && fromSel.options.length) || wl.length || 0;
+      const toCount = (toSel && toSel.options && toSel.options.length) || wl.length || 0;
+      log('log', 'options counts', { from: fromCount, to: toCount });
+      if (!fromCount || !toCount) {
+        const cta = root.querySelector('#swapv2-cta');
+        if (cta) { cta.disabled = true; cta.title = 'Token list indisponible'; }
+        err('Token lists empty at init()');
+      }
+    } catch (e) { err('options count check failed', e); }
     try {
       const evBus = window.BoomboxEvents;
       const chainChangedEv = evBus?.EVENTS?.CHAIN_CHANGED;
@@ -518,7 +563,29 @@
     return true;
   }
 
-  if (!window.SwapV2Controller) { window.SwapV2Controller = { init }; }
+  // Exposition contrôleur + debug
+  function debugStatus() {
+    const root = document.getElementById('swapv2-root');
+    const q = (s) => root?.querySelector?.(s);
+    const fromSel = q('#swapv2-from-token');
+    const toSel = q('#swapv2-to-token');
+    const status = {
+      root: !!root,
+      rootChildren: (root && root.children && root.children.length) || 0,
+      adaptersPresent: !!window.SwapV2Adapters,
+      adapterKeys: Object.keys(window.SwapV2Adapters || {}),
+      fromSel: !!fromSel,
+      toSel: !!toSel,
+      fromOptions: (fromSel && fromSel.options && fromSel.options.length) || 0,
+      toOptions: (toSel && toSel.options && toSel.options.length) || 0,
+      cta: !!q('#swapv2-cta'),
+      network: (window && window.BoomboxChainManager && window.BoomboxChainManager.currentChain) || 'unknown'
+    };
+    try { console.table(status); } catch (_) { console.log(status); }
+    return status;
+  }
+
+  window.SwapV2Controller = Object.assign(window.SwapV2Controller || {}, { init, debugStatus });
   } catch (e) {
     console.error('[SWAP_V2:FATAL] Controller bootstrap failed:', e && e.message, e && e.stack);
   }
