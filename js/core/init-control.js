@@ -124,7 +124,17 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
             loadScript('js/components/swap-v2-popover-infos.js')
           ])
           .then(() => loadScript('js/core/swap-v2-controller.js'))
-          .then(() => { try { window.SwapV2Controller?.init?.(); } catch (_) {} });
+          .then(() => { 
+            try {
+              const root = document.getElementById('swapv2-root');
+              if (root && window.SwapV2Controller && typeof window.SwapV2Controller.init === 'function') {
+                console.log('[SWAP_V2][BOOT] calling controller.init');
+                window.SwapV2Controller.init(root);
+              } else {
+                console.warn('[SWAP_V2][BOOT] controller not ready');
+              }
+            } catch (e) { try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {} }
+          });
       })
       .catch((e) => {
         try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {}

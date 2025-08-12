@@ -750,7 +750,7 @@
     } catch (_) {}
   }
 
-  function init() {
+  async function initSwapV2(rootArg) {
     // Assertions et debug préliminaires
     log('log', 'init start');
     if (!document.getElementById('swapv2-root')) {
@@ -761,7 +761,7 @@
     }
 
     state.chainKey = getChainKey();
-    const root = mountRootIfNeeded();
+    const root = rootArg || mountRootIfNeeded();
     if (!root) { log('warn', 'Point de montage #swapv2-root introuvable'); return false; }
     // Vérification des sélecteurs requis
     try {
@@ -829,7 +829,8 @@
   }
 
   // Exposition contrôleur + debug
-  window.SwapV2Controller = Object.assign(window.SwapV2Controller || {}, { init, debugStatus });
+  window.SwapV2Controller = Object.assign(window.SwapV2Controller || {}, { init: initSwapV2, debugStatus });
+  window.initSwapV2 = initSwapV2;
   } catch (e) {
     console.error('[SWAP_V2:FATAL] Controller bootstrap failed:', e && e.message, e && e.stack);
   }
