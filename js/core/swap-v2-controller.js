@@ -129,6 +129,23 @@
       return { connected, address: evmAddr || solAddr, chainId };
     } catch (_) { return { connected: false, address: null, chainId: null }; }
   }
+
+  async function detectWalletViaEthereum() {
+    try {
+      if (!window.ethereum || typeof window.ethereum.request !== 'function') {
+        return { connected: !!window.BOOMB_SOLANA_PUBLIC_KEY, address: window.BOOMB_SOLANA_PUBLIC_KEY || null, chainKey: window.BOOMB_SOLANA_PUBLIC_KEY ? 'solana' : getChainKey() };
+      }
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' }).catch(() => []);
+      const addr = Array.isArray(accounts) && accounts.length ? accounts[0] : null;
+      let rawId = window.ethereum.chainId || window.ethereum.networkVersion || null;
+      if (typeof rawId === 'string' && rawId.startsWith('0x')) { try { rawId = parseInt(rawId, 16); } catch (_) {} }
+      const key = mapEvmChainIdToKey(rawId) || getChainKey();
+      return { connected: !!addr, address: addr, chainKey: addr ? key : getChainKey() };
+    } catch (e) {
+      log('warn', '[WALLET] detect failed', e);
+      return { connected: false, address: null, chainKey: getChainKey() };
+    }
+  }
   function getWhitelistForChain(chainKey) { return TOKENS_BY_CHAIN[chainKey] || TOKENS_BY_CHAIN['bsc']; }
   function qs(sel, root) { return (root || document).querySelector(sel); }
   function qsa(sel, root) { return (root || document).querySelectorAll(sel); }
@@ -643,16 +660,8 @@
       if (evBus && typeof evBus.on === 'function' && walletEvents.length) {
         walletEvents.forEach(evt => evBus.on(evt, () => {
           try {
-            updateWalletState(root);
-            log('log', '[WALLET] event');
-            // UI toujours interactive; pas de message persistant
-            setStatusMessage(root, '');
-            setInteractiveEnabled(root, true);
-            const st = getWallet();
-            if (st.connected) { applyChainDefaultsIfNeeded(root); }
-            refreshBalances(root);
-            scheduleQuote(root);
-            updateCta(root);
+            log('log', '[SWAP_V2][EVENT] wallet bus');
+            resyncWallet(root);
           } catch (_) {}
         }));
         return;
@@ -665,30 +674,20 @@
         try {
           const ws = getWallet();
           const changed = ws.address !== lastAddr || ws.connected !== state.walletConnected || getChainKey() !== state.chainKey;
-          if (changed) {
-            state.walletConnected = !!ws.connected;
-            state.address = ws.address || null;
-            state.chainKey = getChainKey();
-            lastAddr = state.address;
-            onChainChanged();
-            refreshBalances(root);
-            scheduleQuote(root);
-            updateCta(root);
-          }
-          if (state.walletConnected) { clearInterval(iv); }
+          if (changed) { resyncWallet(root); lastAddr = ws.address || null; }
         } catch (_) {}
-      }, 5000);
+      }, 2000);
     } catch (_) {}
 
     // Écouteurs EVM directs + événements custom globaux
     try {
       if (window.ethereum && typeof window.ethereum.on === 'function') {
-        window.ethereum.on('accountsChanged', async () => { try { const r = document.getElementById('swapv2-root'); await initTokenSelectors(r); applyChainDefaultsIfNeeded(r); onChainChanged(); } catch (_) {} });
-        window.ethereum.on('chainChanged', async () => { try { const r = document.getElementById('swapv2-root'); await initTokenSelectors(r); applyChainDefaultsIfNeeded(r); onChainChanged(); } catch (_) {} });
+        window.ethereum.on('accountsChanged', async () => { try { const r = document.getElementById('swapv2-root'); log('log', '[SWAP_V2][EVENT] accountsChanged'); await resyncWallet(r); onChainChanged(); } catch (_) {} });
+        window.ethereum.on('chainChanged', async () => { try { const r = document.getElementById('swapv2-root'); log('log', '[SWAP_V2][EVENT] chainChanged'); await resyncWallet(r); onChainChanged(); } catch (_) {} });
       }
     } catch (_) {}
-    try { window.addEventListener('boombox:wallet:connected', async () => { try { const r = document.getElementById('swapv2-root'); await initTokenSelectors(r); applyChainDefaultsIfNeeded(r); onChainChanged(); } catch (_) {} }); } catch (_) {}
-    try { window.addEventListener('boombox:wallet:disconnected', async () => { try { const r = document.getElementById('swapv2-root'); await initTokenSelectors(r); onChainChanged(); } catch (_) {} }); } catch (_) {}
+    try { window.addEventListener('boombox:wallet:connected', async () => { try { const r = document.getElementById('swapv2-root'); log('log', '[SWAP_V2][EVENT] boombox:wallet:connected'); await resyncWallet(r); onChainChanged(); } catch (_) {} }); } catch (_) {}
+    try { window.addEventListener('boombox:wallet:disconnected', async () => { try { const r = document.getElementById('swapv2-root'); log('log', '[SWAP_V2][EVENT] boombox:wallet:disconnected'); await resyncWallet(r); onChainChanged(); } catch (_) {} }); } catch (_) {}
   }
 
   function getWalletStateSafe() {
@@ -733,6 +732,24 @@
       state.chainKey = getChainKey();
     } catch (_) {}
     updateCta(root);
+  }
+
+  async function resyncWallet(root) {
+    try {
+      const det = await detectWalletViaEthereum();
+      state.walletConnected = !!det.connected;
+      state.address = det.address || null;
+      state.chainKey = det.chainKey || getChainKey();
+      log('log', '[WALLET] resync', { connected: state.walletConnected, address: state.address, chain: state.chainKey });
+      await initTokenSelectors(root);
+      applyChainDefaultsIfNeeded(root);
+      refreshBalances(root);
+      updateCta(root);
+      const amt = Number(state.fromAmount || '0');
+      if (state.walletConnected && state.fromToken && state.toToken && amt > 0) {
+        scheduleQuote(root);
+      }
+    } catch (e) { log('warn', '[WALLET] resync failed', e); }
   }
 
   function applyChainDefaultsIfNeeded(root) {
@@ -829,7 +846,7 @@
   }
 
   // Exposition contrôleur + debug
-  window.SwapV2Controller = Object.assign(window.SwapV2Controller || {}, { init: initSwapV2, debugStatus });
+  window.SwapV2Controller = Object.assign(window.SwapV2Controller || {}, { init: initSwapV2, debugStatus, resyncWallet });
   window.initSwapV2 = initSwapV2;
   } catch (e) {
     console.error('[SWAP_V2:FATAL] Controller bootstrap failed:', e && e.message, e && e.stack);
