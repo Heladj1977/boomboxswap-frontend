@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="assets/css/boombox.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/swap-v2.css">
     <!-- Préchargement ciblé: uniquement les images immédiatement visibles -->
     <link rel="preload" as="image" href="assets/images/tokens/bnb.svg" imagesrcset="assets/images/tokens/bnb.svg 1x" />
     <link rel="preload" as="image" href="assets/images/tokens/usdt.svg" imagesrcset="assets/images/tokens/usdt.svg 1x" />
@@ -213,22 +214,75 @@
             <!-- Card 6: Swap -->
             <div class="smart-card bottom-row">
               <div id="swapv2-root">
-                <div class="card-header">
-                  <h3 class="card-title">Swap</h3>
-                  <i class="fas fa-exchange-alt card-icon"></i>
-                </div>
+                <div class="swapv2-container" role="region" aria-label="Module Swap V2">
+                  <div class="swapv2-header">
+                    <div class="swapv2-title">SWAP</div>
+                    <button class="swapv2-icon-btn" type="button" id="swapv2-open-settings" aria-label="Ouvrir les paramètres">
+                      <img class="swapv2-icon-img" src="assets/images/icons/settings.svg" alt="Paramètres" width="16" height="16"/>
+                    </button>
+                  </div>
 
-                <!-- Placeholder statique (affiché immédiatement) -->
-                <div class="swapv2-placeholder">
-                  <div class="swapv2-row">
-                    <span class="swapv2-label">From</span>
-                    <div class="swapv2-fake-input">—</div>
+                  <div class="swapv2-block swapv2-from">
+                    <div class="swapv2-row swapv2-row-top">
+                      <button class="swapv2-token-btn" id="swapv2-from-token" type="button" aria-label="Sélectionner le jeton source">Sélectionner</button>
+                      <div class="swapv2-balance">
+                        <div class="swapv2-balance-label">Solde:</div>
+                        <div class="swapv2-balance-value" id="swapv2-from-balance">—</div>
+                      </div>
+                    </div>
+                    <div class="swapv2-amount-row">
+                      <input id="swapv2-from-amount" class="swapv2-input" type="number" step="any" min="0" inputmode="decimal" placeholder="0,00" aria-label="Montant à échanger (source)" />
+                    </div>
+                    <div id="swapv2-from-quick" class="swapv2-quick hidden">
+                      <button data-q="25" class="swapv2-chip" type="button">25%</button>
+                      <button data-q="50" class="swapv2-chip" type="button">50%</button>
+                      <button data-q="100" class="swapv2-chip" type="button">MAX</button>
+                    </div>
                   </div>
-                  <div class="swapv2-row">
-                    <span class="swapv2-label">To</span>
-                    <div class="swapv2-fake-input">—</div>
+
+                  <div class="swapv2-switch-row">
+                    <button id="swapv2-switch" class="swapv2-btn" type="button" aria-label="Inverser les jetons">
+                      <svg class="swapv2-switch-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+                        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M4 8h5M11 5l4 3-4 3"/>
+                          <path d="M20 16H15M15 19l-4-3 4-3"/>
+                        </g>
+                      </svg>
+                    </button>
                   </div>
-                  <button id="swapv2-cta" class="btn" disabled>Swap</button>
+
+                  <div class="swapv2-block swapv2-to">
+                    <div class="swapv2-row swapv2-row-top">
+                      <button class="swapv2-token-btn" id="swapv2-to-token" type="button" aria-label="Sélectionner le jeton cible">Sélectionner</button>
+                      <div class="swapv2-balance">
+                        <div class="swapv2-balance-label">Solde:</div>
+                        <div class="swapv2-balance-value" id="swapv2-to-balance">—</div>
+                      </div>
+                    </div>
+                    <div class="swapv2-amount-row">
+                      <input id="swapv2-to-amount" class="swapv2-input" type="number" step="any" min="0" inputmode="decimal" placeholder="0,00" aria-label="Montant cible (lecture seule par défaut)" />
+                    </div>
+                    <div class="swapv2-subinfo">
+                      <span class="swapv2-subinfo-label">Minimum reçu:</span>
+                      <span class="swapv2-subinfo-value" id="swapv2-min-received">—</span>
+                    </div>
+                  </div>
+
+                  <div class="swapv2-infos">
+                    <div class="swapv2-info-row">
+                      <div class="swapv2-info-label">Prix :</div>
+                      <div class="swapv2-info-value" id="swapv2-price">—</div>
+                      <button class="swapv2-btn swapv2-btn-ghost" id="swapv2-open-infos" type="button" aria-label="Plus d'informations">Infos</button>
+                    </div>
+                    <div class="swapv2-info-row">
+                      <div class="swapv2-info-label">Frais totaux :</div>
+                      <div class="swapv2-info-value" id="swapv2-fees">—</div>
+                    </div>
+                  </div>
+
+                  <div class="swapv2-footer">
+                    <button id="swapv2-cta" class="swapv2-btn swapv2-btn-primary" type="button" disabled>SWAP</button>
+                  </div>
                 </div>
               </div>
             </div>

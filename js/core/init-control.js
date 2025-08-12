@@ -118,7 +118,6 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
         } catch (e) { try { console.error('[SWAP_V2] root early show error', e); } catch (_) {} }
 
         return Promise.all([
-            loadCss('assets/css/swap-v2.css'),
             loadScript('js/core/swap-v2-adapters.js'),
             loadScript('js/components/swap-v2-modal-settings.js'),
             loadScript('js/components/swap-v2-modal-token-select.js'),
