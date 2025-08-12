@@ -29,8 +29,67 @@
     settings: Object.assign({}, defaultSettings),
     walletConnected: false,
     address: null,
-    quoteTimer: null
+    quoteTimer: null,
+    lastPriceSource: 'none'
   };
+
+  const SUPPORTED = {
+    bsc: { from: 'BNB', to: 'USDT' },
+    arbitrum: { from: 'ETH', to: 'USDC' },
+    solana: { from: 'SOL', to: 'USDC' }
+  };
+
+  function isChainSupported(chainKey) {
+    return Object.prototype.hasOwnProperty.call(SUPPORTED, chainKey);
+  }
+
+  function getDefaultPairForChain(chainKey) {
+    const d = SUPPORTED[chainKey];
+    return d ? { from: d.from, to: d.to } : null;
+  }
+
+  function setStatusMessage(root, text) {
+    try {
+      let msg = qs('#swapv2-status', root);
+      if (!msg) {
+        msg = document.createElement('div');
+        msg.id = 'swapv2-status';
+        msg.className = 'swapv2-status';
+        const header = qs('.swapv2-header', root);
+        const container = qs('.swapv2-container', root) || root;
+        if (header && header.parentNode) {
+          header.parentNode.insertBefore(msg, header.nextSibling);
+        } else {
+          container.insertBefore(msg, container.firstChild);
+        }
+      }
+      msg.textContent = String(text || '');
+    } catch (_) {}
+  }
+
+  function setInteractiveEnabled(root, enabled) {
+    try {
+      const toggle = (el) => { if (el) el.disabled = !enabled; };
+      toggle(qs('#swapv2-from-amount', root));
+      toggle(qs('#swapv2-to-amount', root));
+      toggle(qs('#swapv2-cta', root));
+      qsa('.swapv2-token-btn', root).forEach((b) => { b.disabled = !enabled; });
+      qsa('.swapv2-chip', root).forEach((b) => { b.disabled = !enabled; });
+      const infosBtn = qs('#swapv2-open-infos', root); toggle(infosBtn);
+      const settingsBtn = qs('#swapv2-open-settings', root); toggle(settingsBtn);
+    } catch (_) {}
+  }
+
+  function computeCtaReason() {
+    if (!state.walletConnected) return 'Wallet non connecté';
+    if (!isChainSupported(state.chainKey)) return 'Chaîne non supportée';
+    if (!state.fromToken) return 'Sélectionner un jeton source';
+    if (!state.toToken) return 'Sélectionner un jeton cible';
+    if (state.fromToken === state.toToken) return 'Sélectionner deux jetons différents';
+    const amt = Number(state.fromAmount || '0');
+    if (!(amt > 0)) return 'Saisir un montant';
+    return '';
+  }
 
   function getChainKey() {
     try { return window.BoomboxChainManager?.getCurrentChainId?.() || 'bsc'; } catch (_) { return 'bsc'; }
@@ -151,7 +210,11 @@
   function updateCta(root) {
     const btn = qs('#swapv2-cta', root);
     if (!btn) return;
-    btn.disabled = computeCtaDisabled();
+    const disabled = computeCtaDisabled();
+    btn.disabled = disabled;
+    const reason = computeCtaReason();
+    btn.title = disabled && reason ? reason : '';
+    try { log('log', '[CTA]', { disabled, reason }); } catch (_) {}
   }
 
   function savePrefs() {
@@ -243,6 +306,7 @@
         setText('#swapv2-fees', '—', root);
         return;
       }
+      log('log', '[QUOTE] start', { chainKey: state.chainKey, from: state.fromToken, to: state.toToken, amount: amt });
       const q = await ad.quote({
         chainKey: state.chainKey,
         from: state.fromToken,
@@ -256,6 +320,8 @@
       setText('#swapv2-price', price === '—' ? '—' : formatDisplayNumber(price), root);
       setText('#swapv2-min-received', min === '—' ? '—' : formatDisplayNumber(min), root);
       setText('#swapv2-fees', fees, root);
+      state.lastPriceSource = (q && q.fallback) ? 'fallback' : (price !== '—' ? 'api' : 'none');
+      log('log', '[QUOTE] done', { source: state.lastPriceSource, price });
     } catch (e) {
       log('warn', 'quote failed', e);
       setText('#swapv2-price', '—', root);
@@ -401,6 +467,14 @@
       state.chainKey = getChainKey();
       const root = document.getElementById('swapv2-root');
       if (!root || root.hidden) return;
+      log('log', '[CHAIN] changed to', state.chainKey);
+      if (!isChainSupported(state.chainKey)) {
+        setStatusMessage(root, 'Chaîne non supportée');
+        setInteractiveEnabled(root, false);
+      } else {
+        setStatusMessage(root, '');
+        setInteractiveEnabled(root, true);
+      }
       const wl = getWhitelistForChain(state.chainKey);
       if (state.fromToken && !wl.includes(state.fromToken)) {
         state.fromToken = null;
@@ -442,7 +516,25 @@
       ].filter(Boolean);
       if (evBus && typeof evBus.on === 'function' && walletEvents.length) {
         walletEvents.forEach(evt => evBus.on(evt, () => {
-          try { updateWalletState(root); refreshBalances(root); scheduleQuote(root); updateCta(root); } catch (_) {}
+          try {
+            updateWalletState(root);
+            log('log', '[WALLET] event');
+            const st = getWalletStateSafe();
+            if (!st.connected) {
+              setStatusMessage(root, 'Connectez votre wallet pour utiliser le swap');
+              setInteractiveEnabled(root, false);
+            } else if (!isChainSupported(st.chainKey)) {
+              setStatusMessage(root, 'Chaîne non supportée');
+              setInteractiveEnabled(root, false);
+            } else {
+              setStatusMessage(root, '');
+              setInteractiveEnabled(root, true);
+              applyChainDefaultsIfNeeded(root);
+            }
+            refreshBalances(root);
+            scheduleQuote(root);
+            updateCta(root);
+          } catch (_) {}
         }));
         return;
       }
@@ -480,6 +572,30 @@
     return { connected: false, chainKey: getChainKey() };
   }
 
+  // Étendre debugStatus pour inclure CTA et prix
+  function debugStatus() {
+    const root = document.getElementById('swapv2-root');
+    const q = (s) => root?.querySelector?.(s);
+    const fromSel = q('#swapv2-from-token');
+    const toSel = q('#swapv2-to-token');
+    const cta = q('#swapv2-cta');
+    const status = {
+      root: !!root,
+      rootChildren: (root && root.children && root.children.length) || 0,
+      adaptersPresent: !!window.SwapV2Adapters,
+      adapterKeys: Object.keys(window.SwapV2Adapters || {}),
+      walletConnected: !!state.walletConnected,
+      chain: state.chainKey,
+      tokens: { from: state.fromToken, to: state.toToken },
+      amount: state.fromAmount,
+      ctaDisabled: !!(cta && cta.disabled),
+      ctaReason: computeCtaReason(),
+      priceSource: state.lastPriceSource
+    };
+    try { console.table(status); } catch (_) { console.log(status); }
+    return status;
+  }
+
   function updateWalletState(root) {
     try {
       const st = getWalletStateSafe();
@@ -488,6 +604,21 @@
       state.chainKey = st.chainKey || getChainKey();
     } catch (_) {}
     updateCta(root);
+  }
+
+  function applyChainDefaultsIfNeeded(root) {
+    try {
+      if (!isChainSupported(state.chainKey)) {
+        setStatusMessage(root, 'Chaîne non supportée');
+        setInteractiveEnabled(root, false);
+        return;
+      }
+      const defaults = getDefaultPairForChain(state.chainKey);
+      if (!state.fromToken) state.fromToken = defaults.from;
+      if (!state.toToken) state.toToken = defaults.to;
+      const fromBtn = qs('#swapv2-from-token', root); if (fromBtn && state.fromToken) fromBtn.textContent = state.fromToken;
+      const toBtn = qs('#swapv2-to-token', root); if (toBtn && state.toToken) toBtn.textContent = state.toToken;
+    } catch (_) {}
   }
 
   function init() {
@@ -525,6 +656,14 @@
       if (v1Content) v1Content.style.display = 'none';
     } catch (_) {}
     updateWalletState(root);
+    if (!state.walletConnected) {
+      setStatusMessage(root, 'Connectez votre wallet pour utiliser le swap');
+      setInteractiveEnabled(root, false);
+    } else {
+      setStatusMessage(root, '');
+      setInteractiveEnabled(root, true);
+    }
+    applyChainDefaultsIfNeeded(root);
     loadPrefsForChain();
     // Re-appliquer labels tokens depuis prefs si présents
     if (state.fromToken) setText('#swapv2-from-token', state.fromToken, root);
@@ -564,27 +703,6 @@
   }
 
   // Exposition contrôleur + debug
-  function debugStatus() {
-    const root = document.getElementById('swapv2-root');
-    const q = (s) => root?.querySelector?.(s);
-    const fromSel = q('#swapv2-from-token');
-    const toSel = q('#swapv2-to-token');
-    const status = {
-      root: !!root,
-      rootChildren: (root && root.children && root.children.length) || 0,
-      adaptersPresent: !!window.SwapV2Adapters,
-      adapterKeys: Object.keys(window.SwapV2Adapters || {}),
-      fromSel: !!fromSel,
-      toSel: !!toSel,
-      fromOptions: (fromSel && fromSel.options && fromSel.options.length) || 0,
-      toOptions: (toSel && toSel.options && toSel.options.length) || 0,
-      cta: !!q('#swapv2-cta'),
-      network: (window && window.BoomboxChainManager && window.BoomboxChainManager.currentChain) || 'unknown'
-    };
-    try { console.table(status); } catch (_) { console.log(status); }
-    return status;
-  }
-
   window.SwapV2Controller = Object.assign(window.SwapV2Controller || {}, { init, debugStatus });
   } catch (e) {
     console.error('[SWAP_V2:FATAL] Controller bootstrap failed:', e && e.message, e && e.stack);
