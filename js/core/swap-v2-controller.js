@@ -31,7 +31,8 @@
     address: null,
     quoteTimer: null,
     lastPriceSource: 'none',
-    walletWatchTimer: null
+    walletWatchTimer: null,
+    tokenList: []
   };
 
   const SUPPORTED = {
@@ -131,6 +132,96 @@
   function getWhitelistForChain(chainKey) { return TOKENS_BY_CHAIN[chainKey] || TOKENS_BY_CHAIN['bsc']; }
   function qs(sel, root) { return (root || document).querySelector(sel); }
   function qsa(sel, root) { return (root || document).querySelectorAll(sel); }
+
+  async function loadTokenListForChain(chainKey) {
+    try {
+      // 1) Config globale éventuelle
+      const cfg = (window.BoomboxConfig && window.BoomboxConfig.tokens && window.BoomboxConfig.tokens[chainKey]) || null;
+      if (Array.isArray(cfg) && cfg.length) {
+        state.tokenList = cfg;
+        console.log('[SWAP_V2][TOKENS] Loaded from BoomboxConfig', { chainKey, count: state.tokenList.length });
+        return state.tokenList;
+      }
+      // 2) JSON local si disponible
+      const url = `assets/tokens/tokens-${chainKey}.json`;
+      try {
+        const res = await fetch(url, { cache: 'no-cache' });
+        if (res && res.ok) {
+          const list = await res.json();
+          if (Array.isArray(list)) {
+            state.tokenList = list;
+            console.log('[SWAP_V2][TOKENS] Loaded from JSON', { chainKey, count: state.tokenList.length });
+            return state.tokenList;
+          }
+        }
+      } catch (_) {}
+      // 3) Fallback symbol-only depuis whitelist
+      const wl = getWhitelistForChain(chainKey) || [];
+      state.tokenList = wl.map(sym => ({ symbol: sym }));
+      console.log('[SWAP_V2][TOKENS] Loaded from whitelist fallback', { chainKey, count: state.tokenList.length });
+      return state.tokenList;
+    } catch (e) {
+      state.tokenList = [];
+      console.error('[SWAP_V2][TOKENS] Load failed', e);
+      return [];
+    }
+  }
+
+  function refreshTokenButtonsUI(root) {
+    try {
+      const fromBtn = qs('#swapv2-from-token', root);
+      const toBtn = qs('#swapv2-to-token', root);
+      if (fromBtn && state.fromToken) fromBtn.textContent = state.fromToken;
+      if (toBtn && state.toToken) toBtn.textContent = state.toToken;
+    } catch (_) {}
+  }
+
+  function openTokenModal(side, root) {
+    try {
+      const list = (state.tokenList || []).map(t => t.symbol).filter(Boolean);
+      if (window.SwapV2TokenSelectModal && typeof window.SwapV2TokenSelectModal.show === 'function') {
+        window.SwapV2TokenSelectModal.show({
+          side,
+          chainKey: state.chainKey,
+          tokens: list,
+          onSelect: (symbol) => {
+            if (side === 'from') { state.fromToken = symbol; setText('#swapv2-from-token', symbol, root); }
+            else { state.toToken = symbol; setText('#swapv2-to-token', symbol, root); }
+            console.log('[SWAP_V2][SELECTOR]', side, 'updated to', symbol);
+            updateCta(root);
+            savePrefs();
+            refreshBalances(root);
+            const amt = Number(state.fromAmount || '0');
+            if (state.fromToken && state.toToken && amt > 0) { scheduleQuote(root); }
+          }
+        });
+        return;
+      }
+      // Fallback simple
+      const choice = prompt(`Choisir un token (${side})\n${list.join(', ')}`);
+      if (choice && list.includes(choice)) {
+        if (side === 'from') { state.fromToken = choice; setText('#swapv2-from-token', choice, root); }
+        else { state.toToken = choice; setText('#swapv2-to-token', choice, root); }
+        console.log('[SWAP_V2][SELECTOR]', side, 'updated to', choice);
+        updateCta(root);
+        const amt = Number(state.fromAmount || '0');
+        if (state.fromToken && state.toToken && amt > 0) { scheduleQuote(root); }
+      }
+    } catch (e) { console.error('[SWAP_V2][SELECTOR] openTokenModal failed', e); }
+  }
+
+  async function initTokenSelectors(root) {
+    try {
+      await loadTokenListForChain(state.chainKey);
+      // Attacher ouvertures modales (cliquables même hors connexion)
+      const fromBtn = qs('#swapv2-from-token', root);
+      const toBtn = qs('#swapv2-to-token', root);
+      if (fromBtn) fromBtn.onclick = () => openTokenModal('from', root);
+      if (toBtn) toBtn.onclick = () => openTokenModal('to', root);
+      refreshTokenButtonsUI(root);
+      console.log('[SWAP_V2][TOKENS] Selectors initialized', { chainKey: state.chainKey });
+    } catch (e) { console.error('[SWAP_V2][TOKENS] initTokenSelectors failed', e); }
+  }
 
   function renderHeader() {
     return `
@@ -333,6 +424,7 @@
         setText('#swapv2-fees', '—', root);
         return;
       }
+      if (!state.walletConnected) return;
       if (!state.fromToken || !state.toToken) return;
       const amt = Number(state.fromAmount || '0');
       if (!(amt > 0)) {
@@ -591,12 +683,12 @@
     // Écouteurs EVM directs + événements custom globaux
     try {
       if (window.ethereum && typeof window.ethereum.on === 'function') {
-        window.ethereum.on('accountsChanged', () => { try { onChainChanged(); } catch (_) {} });
-        window.ethereum.on('chainChanged', () => { try { onChainChanged(); } catch (_) {} });
+        window.ethereum.on('accountsChanged', async () => { try { const r = document.getElementById('swapv2-root'); await initTokenSelectors(r); applyChainDefaultsIfNeeded(r); onChainChanged(); } catch (_) {} });
+        window.ethereum.on('chainChanged', async () => { try { const r = document.getElementById('swapv2-root'); await initTokenSelectors(r); applyChainDefaultsIfNeeded(r); onChainChanged(); } catch (_) {} });
       }
     } catch (_) {}
-    try { window.addEventListener('boombox:wallet:connected', () => { try { onChainChanged(); } catch (_) {} }); } catch (_) {}
-    try { window.addEventListener('boombox:wallet:disconnected', () => { try { onChainChanged(); } catch (_) {} }); } catch (_) {}
+    try { window.addEventListener('boombox:wallet:connected', async () => { try { const r = document.getElementById('swapv2-root'); await initTokenSelectors(r); applyChainDefaultsIfNeeded(r); onChainChanged(); } catch (_) {} }); } catch (_) {}
+    try { window.addEventListener('boombox:wallet:disconnected', async () => { try { const r = document.getElementById('swapv2-root'); await initTokenSelectors(r); onChainChanged(); } catch (_) {} }); } catch (_) {}
   }
 
   function getWalletStateSafe() {
@@ -646,8 +738,8 @@
   function applyChainDefaultsIfNeeded(root) {
     try {
       if (!isChainSupported(state.chainKey)) {
-        setStatusMessage(root, 'Chaîne non supportée');
-        setInteractiveEnabled(root, false);
+        setStatusMessage(root, '');
+        setInteractiveEnabled(root, true);
         return;
       }
       const defaults = getDefaultPairForChain(state.chainKey);
@@ -697,6 +789,7 @@
     setStatusMessage(root, '');
     setInteractiveEnabled(root, true);
     applyChainDefaultsIfNeeded(root);
+    await initTokenSelectors(root);
     loadPrefsForChain();
     // Re-appliquer labels tokens depuis prefs si présents
     if (state.fromToken) setText('#swapv2-from-token', state.fromToken, root);
