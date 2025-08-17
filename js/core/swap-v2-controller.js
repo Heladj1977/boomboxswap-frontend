@@ -1,6 +1,8 @@
-/* BOOMBOXSWAP - Swap V2 Controller (Lot 1, UI seule) */
+/* BOOMBOXSWAP - Swap V2 Controller (Lot 2, Quote + Swap) */
 import { WalletEventHandler } from './swapv2/wallet-events.js';
 import { TokenListManager } from './swapv2/token-list.js';
+import { QuoteAndSlippageManager } from './swapv2/quote-and-slippage.js';
+import { SwapExecutor } from './swapv2/swap-executor.js';
 
 (function () {
   try {
@@ -1105,7 +1107,7 @@ import { TokenListManager } from './swapv2/token-list.js';
     // Assertions et debug préliminaires
     log('log', 'init start');
     
-    // Initialisation des modules P2.LOT1
+    // Initialisation des modules P2.LOT1 + P2.LOT2.LOT2
     try {
       window.walletHandler = new WalletEventHandler({ 
         apiClient: window.BoomboxAPI, 
@@ -1114,9 +1116,18 @@ import { TokenListManager } from './swapv2/token-list.js';
       window.tokenManager = new TokenListManager({ 
         apiClient: window.BoomboxAPI 
       });
+      window.quoteManager = new QuoteAndSlippageManager({
+        apiClient: window.BoomboxAPI,
+        eventBus: window.BoomboxEvents
+      });
+      window.swapExecutor = new SwapExecutor({
+        apiClient: window.BoomboxAPI,
+        eventBus: window.BoomboxEvents,
+        quoteManager: window.quoteManager
+      });
       window.walletHandler.setup();
     } catch (e) {
-      console.warn('[SWAP_V2] P2.LOT1 modules init failed', e);
+      console.warn('[SWAP_V2] P2.LOT1 + P2.LOT2.LOT2 modules init failed', e);
     }
     if (!document.getElementById('swapv2-root')) {
       return err('root missing');
