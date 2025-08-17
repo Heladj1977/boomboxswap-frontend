@@ -62,31 +62,7 @@ async function connectMetaMaskRobust() {
         // VÉRIFIER METAMASK DISPONIBLE
         console.log(`AUDIT [${timestamp}]: Vérification MetaMask disponible...`);
         if (!window.ethereum) {
-            // Attendre injection asynchrone (événement ethereum#initialized + polling)
-            const prov = await (async function ensureEthereum(maxMs) {
-                try {
-                    if (window.ethereum) return window.ethereum;
-                    return await new Promise((resolve) => {
-                        let settled = false;
-                        const done = (p) => { if (!settled) { settled = true; resolve(p); } };
-                        try {
-                            window.addEventListener('ethereum#initialized', () => done(window.ethereum), { once: true });
-                        } catch (_) {}
-                        const iv = setInterval(() => { if (window.ethereum) { clearInterval(iv); done(window.ethereum); } }, 120);
-                        setTimeout(() => { try { clearInterval(iv); } catch (_) {}; done(window.ethereum || null); }, maxMs || 3000);
-                    });
-                } catch (_) { return null; }
-            })(5000);
-            if (!prov) {
-                // Forensics
-                console.warn('FORENSIC: MetaMask non injecté après attente', {
-                    ua: navigator.userAgent,
-                    proto: location.protocol,
-                    host: location.host,
-                    ready: document.readyState
-                });
-                throw new Error('METAMASK_NOT_FOUND');
-            }
+            throw new Error('METAMASK_NOT_FOUND');
         }
         
         // Si UI sur Solana → tenter Snap MetaMask Solana avant toute connexion EVM

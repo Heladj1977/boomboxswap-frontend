@@ -1170,15 +1170,6 @@ body.modal-open {
 }
 #swapv2-cta[disabled] { opacity: .6; cursor: not-allowed; }
 
-/* Swap V2 (Card 6) — Solde en vert (même teinte que Card 1) */
-.swapv2-balance-value {
-    color: var(--gaming-success);
-    font-weight: 600;
-}
-
-/* Modale de sélection de jeton — Solde en vert */
-.swapv2-token-balance-value { color: var(--gaming-success); font-weight: 600; }
-
 /* ============================================================================
    STYLES WALLETCONNECT OPTIMISÉS
    ============================================================================ */
