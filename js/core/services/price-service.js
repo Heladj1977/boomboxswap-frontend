@@ -19,6 +19,31 @@
   // Supprimé: fetch direct. Utiliser BoomboxAPI pour respecter l'architecture.
 
   const PriceService = {
+    async getPrice(chainId, symbol, options = {}) {
+      try {
+        if (!window.BoomboxAPI || typeof window.BoomboxAPI.getTokenPrice !== 'function') {
+          throw new Error('ApiClient non disponible');
+        }
+        const data = await window.BoomboxAPI.getTokenPrice(chainId, symbol);
+        if (!data || typeof data.price !== 'number' || !isFinite(data.price)) {
+          throw new Error('Prix invalide');
+        }
+        return data.price;
+      } catch (_) { 
+        // RESTAURÉ: Fallback CAKE pour la carte 1 (portefeuille)
+        // Mais isolé pour ne pas affecter la carte 6 (swap)
+        if (symbol === 'CAKE' && options.forPortfolio) {
+          const cakePrices = {
+            'bsc': 2.50,
+            'arbitrum': 2.45,
+            'base': 2.50
+          };
+          return cakePrices[chainId] || 2.50;
+        }
+        // Pour les autres cas, laisser l'API backend gérer
+        return null; 
+      }
+    },
     async fetchNativePrice(chainId) {
       // Choisir le token natif attendu par la chaîne
       let token = 'BNB';

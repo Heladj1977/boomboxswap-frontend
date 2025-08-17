@@ -100,12 +100,23 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
     loadScript('js/core/feature-flags.js')
       .then(() => {
         let v2Enabled = false;
+        // Mode diagnostic Swap V2: activation non intrusive via query/flag
+        let swapDiag = false;
+        try {
+          const params = typeof window.location?.search === 'string'
+            ? window.location.search
+            : '';
+          swapDiag = (params.indexOf('swapdiag=1') !== -1) ||
+                     (window.__SWAPV2_DIAG__ === true);
+        } catch (_) { swapDiag = false; }
         try {
           v2Enabled =
             window.BoomboxFeatureFlags?.isEnabled('swap_v2_enabled') === true;
         } catch (_) {
           v2Enabled = false;
         }
+        // Forcer l'activation de Swap V2 si mode diagnostic
+        if (swapDiag) { v2Enabled = true; }
         try { console.log(`[SWAP_V2] Flag check: ${v2Enabled}`); } catch (_) {}
         if (!v2Enabled) { return null; }
 
@@ -134,6 +145,32 @@ console.log('🎛️ Contrôle d\'initialisation BOOMBOXSWAP chargé');
                 console.warn('[SWAP_V2][BOOT] controller not ready');
               }
             } catch (e) { try { console.error('[SWAP_V2] ERROR:', e); } catch (_) {} }
+          })
+          .then(() => {
+            // Charger le diagnostic uniquement si demandé et après l'init
+            try {
+              const params = typeof window.location?.search === 'string'
+                ? window.location.search
+                : '';
+              const diagEnabled = (params.indexOf('swapdiag=1') !== -1) ||
+                                  (window.__SWAPV2_DIAG__ === true);
+              if (!diagEnabled) return null;
+              // Protection: timeout 200ms + try/catch; un seul warn si indisponible
+              const withTimeout = (p, ms) => Promise.race([
+                p,
+                new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))
+              ]);
+              const load = loadScript('js/diagnostic/swap-v2-diagnostic.js');
+              return withTimeout(load, 200).catch((e) => {
+                try {
+                  if (!window.__SWAPV2_DIAG_WARNED__) {
+                    window.__SWAPV2_DIAG_WARNED__ = true;
+                    console.warn('[SWAP_V2][DIAG] indisponible (absent/erreur/timeout). Mode ignoré.');
+                  }
+                } catch (_) {}
+                return null;
+              });
+            } catch (_) { return null; }
           });
       })
       .catch((e) => {

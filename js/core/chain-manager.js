@@ -27,6 +27,7 @@ class ChainManager {
                 },
                 tokens: {
                     USDT: '0x55d398326f99059fF775485246999027B3197955',
+                    USDC: '0x8ac76a51CC950d9822D68b83Fe1aD97B32CD580d',
                     CAKE: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
                 }
             },

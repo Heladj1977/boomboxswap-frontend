@@ -25,7 +25,16 @@
         : null;
       const isSol = !!(chain && chain.type === 'solana');
       const solPk = window.BOOMB_SOLANA_PUBLIC_KEY || null;
-      const evmAddr = window.BOOMSWAP_EVM_ADDRESS || window.BOOMSWAP_CURRENT_ADDRESS || null;
+      // Persistance adresse EVM
+      let evmAddr = window.BOOMSWAP_EVM_ADDRESS || window.BOOMSWAP_CURRENT_ADDRESS || null;
+      try {
+        if (!evmAddr) {
+          const saved = localStorage.getItem('boombox_last_evm_address');
+          if (saved) evmAddr = saved;
+        } else {
+          localStorage.setItem('boombox_last_evm_address', evmAddr);
+        }
+      } catch (_) {}
 
       if (isSol) {
         if (solPk) {

@@ -19,6 +19,26 @@
     constructor() {
       this.currentAbort = null;
       this.fetchSeq = 0;
+      try {
+        // Polling léger pour garder la Card 1 à jour sans F5
+        if (!window.__BAL_UPDATER_POLL__) {
+          window.__BAL_UPDATER_POLL__ = setInterval(() => {
+            try {
+              const addr = window.BOOMSWAP_CURRENT_ADDRESS || localStorage.getItem('boombox_last_evm_address');
+              const cm = window.BoomboxChainManager;
+              const chainId = cm && typeof cm.getCurrentChainId === 'function' ? cm.getCurrentChainId() : 'bsc';
+              if (!addr) return;
+              this.fetchAndUpdate(addr, chainId, (balances) => {
+                try {
+                  // Propager un événement pour que les écrans se rafraîchissent
+                  const ev = new CustomEvent('boombox:balances:updated', { detail: balances });
+                  window.dispatchEvent(ev);
+                } catch (_) {}
+              });
+            } catch (_) {}
+          }, 15000);
+        }
+      } catch (_) {}
     }
 
     async fetch(address, chainId, options = {}) {

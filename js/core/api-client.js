@@ -52,11 +52,12 @@ class ApiClient {
         for (let attempt = 1; attempt <= attemptsMax; attempt++) {
             const controller = buildController();
             try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers,
-                    signal: controller.signal
-                });
+                const method = (options.method || 'GET').toUpperCase();
+                const init = { method, headers, signal: controller.signal };
+                if (method !== 'GET' && method !== 'HEAD') {
+                    init.body = JSON.stringify(options.body || {});
+                }
+                const response = await fetch(url, init);
                 clearTimeout(timeoutId);
 
                 if (!response.ok) {
@@ -124,6 +125,14 @@ class ApiClient {
      */
     async getTokenPrice(chainId, token) {
         return this.request(`/api/v1/price/${chainId}/${token}`);
+    }
+
+    // SWAP V2: Quote Pancake (backend)
+    async postSwapQuote(params) {
+        return this.request(
+            `/api/v1/swap/quote`,
+            { method: 'POST', body: params }
+        );
     }
 
     /**
@@ -273,6 +282,45 @@ class ApiClient {
      */
     async getPositions(address, chainId) {
         return this.request(`/api/v1/positions/wallet/${address}?chain_id=${chainId}`);
+    }
+
+    /**
+     * Récupérer la liste des tokens pour une chaîne
+     * @param {string} chainKey - Clé de la chaîne (bsc, arbitrum, base)
+     * @returns {Promise<Array>} - Liste des tokens
+     */
+    async getTokenList(chainKey, options = {}) {
+        try {
+            // 1. Priorité : configuration globale BoomboxConfig
+            if (window.BoomboxConfig?.tokens?.[chainKey]) {
+                console.log(`[API] Token list loaded from BoomboxConfig for ${chainKey}`);
+                return window.BoomboxConfig.tokens[chainKey];
+            }
+            
+            // 2. Priorité : endpoint backend
+            try {
+                const response = await this.request(`/api/v1/swap/tokens?chain=${chainKey}`, options);
+                console.log(`[API] Token list loaded from backend for ${chainKey}`);
+                return response.tokens || response;
+            } catch (backendError) {
+                console.warn(`[API] Backend token list failed for ${chainKey}, using fallback`);
+            }
+            
+            // 3. Fallback : valeurs par défaut avec avertissement
+            const fallback = {
+                bsc: ['BNB','USDT','USDC','CAKE'],
+                arbitrum: ['ETH','WETH','USDT','USDC','CAKE'],
+                base: ['ETH','WETH','USDT','USDC','CAKE']
+            };
+            
+            const defaultList = fallback[chainKey] || fallback['bsc'];
+            console.warn(`[API] Using fallback token list for ${chainKey}: ${defaultList.join(', ')}`);
+            return defaultList;
+        } catch (error) {
+            console.error(`[API] getTokenList failed for ${chainKey}:`, error);
+            // Fallback ultime
+            return ['BNB','USDT','USDC','CAKE'];
+        }
     }
 }
 
